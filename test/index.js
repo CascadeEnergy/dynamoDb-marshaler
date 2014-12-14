@@ -1,6 +1,6 @@
 'use strict';
 
-var marshaler = require('../lib/marshaler');
+var marshaler = require('../index');
 
 describe('marshaler', function() {
     describe('marshalItem()', function() {
