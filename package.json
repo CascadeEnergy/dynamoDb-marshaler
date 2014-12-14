@@ -1,0 +1,20 @@
+{
+  "name": "dynamoDb-marshaler",
+  "version": "0.0.0",
+  "description": "Marshals JSON documents or object representations of JSON documents into the parameter structure required by DynamoDB. Also allows for unmarshaling.",
+  "main": "marshaler.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.0.1",
+    "should": "^4.3.1",
+    "proxyquire": "^1.1.0",
+    "sinon": "^1.12.1"
+  },
+  "dependencies": {
+    "lodash": "^2.4.1"
+  }
+}
