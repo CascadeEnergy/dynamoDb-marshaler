@@ -6,12 +6,13 @@ var proxyquire = require('proxyquire'),
     marshaler = {
         marshal: function() {}
     },
-    marshalChain = function() {
-        return marshaler;
-    },
-    sut = proxyquire('../index', {
-        './lib/marshalChain': marshalChain
-    });
+    marshalChain = sinon.stub();
+
+marshalChain.onFirstCall().returns(marshaler);
+
+var sut = proxyquire('../index', {
+    './lib/marshalChain': marshalChain
+});
 
 describe('marshaler', function() {
     var marshalStub;
