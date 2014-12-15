@@ -13,7 +13,7 @@ AWS.config.region = 'us-west-2';
 
 var dynamoDb = new AWS.DynamoDB();
 
-var user = {username: 'billmurray'};
+var user = {username: 'billmurray'}; // {username: {S: 'billmurray'}}
 dynamoDb.putItem({
     TableName: 'my-table',
     Item: marshalItem(user)
