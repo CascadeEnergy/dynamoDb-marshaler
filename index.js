@@ -41,7 +41,6 @@ var marshalJson = function(json) {
     return marshalItem(JSON.parse(json));
 };
 
-
 module.exports = {
     marshalJson: marshalJson,
     marshalItem: marshalItem
