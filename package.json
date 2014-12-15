@@ -9,9 +9,10 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "leche": "^1.0.1",
     "mocha": "^2.0.1",
-    "should": "^4.3.1",
     "proxyquire": "^1.1.0",
+    "should": "^4.3.1",
     "sinon": "^1.12.1"
   },
   "dependencies": {
