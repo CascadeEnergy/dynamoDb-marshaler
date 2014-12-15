@@ -2,24 +2,35 @@
 
 var marshalChain = require('../lib/marshalChain'),
     should = require('should'),
-    leche = require('leche'),
-    withData = leche.withData;
+    sinon = require('sinon');
 
-describe('marshalChain', function() {
-    describe('marshal', function() {
-        withData({
-            'a string item': ['bar', {S: 'bar'}],
-            'a number item': [42, {N: '42'}],
-            'a boolean false item': [false, {BOOL: false}],
-            'a boolean true item': [true, {BOOL: true}],
-            'a null item': [null, {NULL: true}],
-            'an undefined item': [undefined, {NULL: true}],
-            'a variable list item': [['bar', 42, null], {L: [{S: 'bar'}, {N: '42'}, {NULL: true}]}],
-            'an object item': [{str: 'bar', num: 42, blank: null}, {M: {str: {S: 'bar'}, num: {N: '42'}, blank: {NULL: true}}}]
-        }, function(item, expected) {
-            it('should marshal to dynamoDb format', function() {
-                marshalChain.marshal(item).should.eql(expected);
-            });
+describe('MarshalChain', function() {
+    var chain,
+        alphaCommand = sinon.stub(),
+        bravoCommand = sinon.stub(),
+        commandList = [alphaCommand, bravoCommand];
+
+    beforeEach(function() {
+        chain = marshalChain(commandList);
+    });
+
+    it('should set commandList in constructor', function() {
+        chain.commandList.should.equal(commandList);
+    });
+
+    describe('marshal()', function() {
+        it('should return a marshaled object by cycling through commands which convert item argument', function() {
+            var item = {},
+                result;
+
+            alphaCommand.withArgs(item, chain).returns(null);
+            bravoCommand.withArgs(item, chain).returns({foo: 'bar'});
+
+            result = chain.marshal(item);
+
+            alphaCommand.calledOnce.should.equal(true);
+            bravoCommand.calledOnce.should.equal(true);
+            result.should.eql({foo: 'bar'});
         });
     });
 });

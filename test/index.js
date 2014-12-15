@@ -3,50 +3,63 @@
 var proxyquire = require('proxyquire'),
     should = require('should'),
     sinon = require('sinon'),
-    marshalChain = {
-        marshal: sinon.stub()
+    marshaler = {
+        marshal: function() {}
     },
-    marshaler = proxyquire('../index', {
+    marshalChain = function() {
+        return marshaler;
+    },
+    sut = proxyquire('../index', {
         './lib/marshalChain': marshalChain
     });
 
 describe('marshaler', function() {
-    describe('marshalItem()', function() {
+    var marshalStub;
+
+    beforeEach(function() {
+        marshalStub = sinon.stub(marshaler, 'marshal');
+    });
+
+    afterEach(function() {
+        marshalStub.restore();
+    });
+
+    describe('marshalJson()', function() {
         it('should throw TypeError if item passed in is not an object literal', function() {
-            marshaler.marshalItem.bind(null, 'foo').should.throw(TypeError, {message: 'Item must be plain object literal'});
+            sut.marshalItem.bind(null, 'foo').should.throw(TypeError, {message: 'Item must be plain object literal'});
         });
 
-        it('should delegate to marshalChain.marshal to convert item to dynamoDb format', function() {
+        it('should delegate to marshaler.marshal to convert item to dynamoDb format', function() {
             var item = {},
                 expected = {},
                 marshaledItem = {M: expected},
                 actual;
 
-            marshalChain.marshal.withArgs(item).returns(marshaledItem);
+            marshalStub.withArgs(item).returns(marshaledItem);
 
-            actual = marshaler.marshalItem(item);
+            actual = sut.marshalItem(item);
 
-            marshalChain.marshal.calledOnce.should.equal(true);
+            marshalStub.calledOnce.should.equal(true);
 
             actual.should.eql(expected);
         });
     });
 
     describe('marshalJson()', function() {
-        it('should parse a json string and delegate to marshalChain.marshal', function() {
+        it('should parse a json string and delegate to marshaler.marshal', function() {
             var json = '{\"foo\": \"bar\"}',
-                parsedItem = {foo: 'bar'},
-                marshaledItem = {foo: {S: 'bar'}},
-                marshalItemStub = sinon.stub(marshaler, 'marshalItem'),
-                result;
+                item = {foo: 'bar'},
+                expected = {},
+                marshaledItem = {M: expected},
+                actual;
 
-            marshalItemStub.withArgs(parsedItem).returns(marshaledItem);
+            marshalStub.withArgs(item).returns(marshaledItem);
 
-            result = marshaler.marshalJson(json);
+            actual = sut.marshalJson(json);
 
-            marshalItemStub.calledOnce.should.equal(true);
+            marshalStub.calledOnce.should.equal(true);
 
-            result.should.eql(marshaledItem);
+            actual.should.eql(expected);
         });
     });
 });
