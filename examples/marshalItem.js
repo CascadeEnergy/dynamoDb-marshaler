@@ -23,7 +23,12 @@ var item = {
             nativeHawaiianOrPacificIslander: false,
             someOtherRace: false
         }
-    }
+    },
+    favoriteFoods: [
+        "burritos",
+        "fried chicken",
+        "pad kee mao"
+    ]
 };
 
 var dynamoDbItem = marshalItem(item);
@@ -87,5 +92,12 @@ console.log(JSON.stringify(dynamoDbItem));
 //                }
 //            }
 //        }
+//    },
+//    "favoriteFoods": {
+//        "SS": [
+//            "burritos",
+//            "fried chicken",
+//            "pad kee mao"
+//        ]
 //    }
 //}

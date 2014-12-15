@@ -8,7 +8,8 @@ describe('MarshalChain', function() {
     var chain,
         alphaCommand = sinon.stub(),
         bravoCommand = sinon.stub(),
-        commandList = [alphaCommand, bravoCommand];
+        charlieCommand = sinon.stub(),
+        commandList = [alphaCommand, bravoCommand, charlieCommand];
 
     beforeEach(function() {
         chain = marshalChain(commandList);
@@ -19,7 +20,7 @@ describe('MarshalChain', function() {
     });
 
     describe('marshal()', function() {
-        it('should return a marshaled object by cycling through commands which convert item argument', function() {
+        it('should only be formatted by first command which accepts the value, after which the loop is exited.', function() {
             var item = {},
                 result;
 
@@ -30,6 +31,9 @@ describe('MarshalChain', function() {
 
             alphaCommand.calledOnce.should.equal(true);
             bravoCommand.calledOnce.should.equal(true);
+            // exits early after bravoCommand handles the item.
+            charlieCommand.callCount.should.equal(0);
+
             result.should.eql({foo: 'bar'});
         });
     });
