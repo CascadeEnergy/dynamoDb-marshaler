@@ -28,7 +28,8 @@ var item = {
         "burritos",
         "fried chicken",
         "pad kee mao"
-    ]
+    ],
+    luckyNumbers: [42, 98, 777]
 };
 
 var json = JSON.stringify(item);
@@ -99,6 +100,13 @@ console.log(JSON.stringify(dynamoDbItem));
 //            "burritos",
 //            "fried chicken",
 //            "pad kee mao"
+//        ]
+//    },
+//    "luckyNumbers": {
+//        "NS": [
+//            "42",
+//            "98",
+//            "777"
 //        ]
 //    }
 //}
