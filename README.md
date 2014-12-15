@@ -1,7 +1,7 @@
 dynamoDb-marshaler
 ===
 
-Translates sane javascript objects into DynamoDb format and vice versa.
+Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.
 
 ## Basic Usage
 
