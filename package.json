@@ -1,7 +1,7 @@
 {
   "name": "dynamoDb-marshaler",
   "version": "0.0.0",
-  "description": "Marshals JSON documents or object representations of JSON documents into the parameter structure required by DynamoDB. Also allows for unmarshaling.",
+  "description": "Translates sane javascript objects into DynamoDb format and vice versa.",
   "main": "marshaler.js",
   "scripts": {
     "test": "mocha"
