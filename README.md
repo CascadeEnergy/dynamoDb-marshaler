@@ -18,6 +18,6 @@ var dynamoDb = new AWS.DynamoDB();
 
 dynamoDb.putItem({
     TableName: 'users',
-    Item: marshalItem({username: 'billmurray'})  // {username: {S: 'billmurray'}}
+    Item: marshalItem({username: 'nackjicholson'})  // {username: {S: 'nackjicholson'}}
 });
 ```

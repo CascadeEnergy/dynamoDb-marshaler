@@ -1,43 +1,18 @@
 'use strict';
 
 var _ = require('lodash'),
-    marshalChain = require('./lib/marshalChain'),
+    marshalService = require('./lib/marshalService');
 
-    // Commands
-    commandsPath = './lib/commands/',
-    marshalString = require(commandsPath + 'marshalString'),
-    marshalNumber = require(commandsPath + 'marshalNumber'),
-    marshalBoolean = require(commandsPath + 'marshalBoolean'),
-    marshalNull = require(commandsPath + 'marshalNull'),
-    marshalStringSet = require(commandsPath + 'marshalStringSet'),
-    marshalNumberSet = require(commandsPath + 'marshalNumberSet'),
-    marshalList = require(commandsPath + 'marshalList'),
-    marshalMap = require(commandsPath + 'marshalMap'),
-
-    // Command Lists
-    marshalCommandList = [
-        marshalString,
-        marshalNumber,
-        marshalBoolean,
-        marshalNull,
-        marshalStringSet,
-        marshalNumberSet,
-        marshalList,
-        marshalMap
-    ],
-
-    // Marshal Chains
-    marshaler = marshalChain(marshalCommandList);
+var ensureItemIsHash = function(item) {
+    if (_.isPlainObject(item)) {
+        return;
+    }
+    throw new TypeError('Item must be plain object literal');
+};
 
 var marshalItem = function(item) {
-    var marshaledItem;
-
-    if (!_.isPlainObject(item)) {
-        throw new TypeError('Item must be plain object literal');
-    }
-
-    marshaledItem = marshaler.marshal(item);
-
+    ensureItemIsHash(item);
+    var marshaledItem = marshalService.marshal(item);
     return marshaledItem.M;
 };
 
@@ -45,7 +20,14 @@ var marshalJson = function(json) {
     return marshalItem(JSON.parse(json));
 };
 
+var unmarshalItem = function(item) {
+    ensureItemIsHash(item);
+    var unmarshaledItem = marshalService.unmarshal({M: item});
+    return unmarshaledItem;
+};
+
 module.exports = {
     marshalJson: marshalJson,
-    marshalItem: marshalItem
+    marshalItem: marshalItem,
+    unmarshalItem: unmarshalItem
 };

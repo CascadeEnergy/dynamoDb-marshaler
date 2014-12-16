@@ -7,7 +7,7 @@ var marshalNull = require('../../lib/commands/marshalNull'),
 describe('marshalNull', function() {
     it('should return null if item is not null or undefined', function() {
         var result = marshalNull({});
-        (result === null).should.equal(true);
+        (result === undefined).should.equal(true);
     });
 
     withData({

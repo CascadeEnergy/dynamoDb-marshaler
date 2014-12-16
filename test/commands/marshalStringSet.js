@@ -11,7 +11,7 @@ describe('marshalStringSet', function() {
     }, function(item) {
         it('should return null', function() {
             var result = marshalStringSet(item);
-            (result === null).should.eql(true);
+            (result === undefined).should.eql(true);
         });
     });
 

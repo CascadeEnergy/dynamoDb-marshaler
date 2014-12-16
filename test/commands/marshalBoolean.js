@@ -7,7 +7,7 @@ var marshalBoolean = require('../../lib/commands/marshalBoolean'),
 describe('marshalBoolean', function() {
     it('should return null if item is not a Boolean', function() {
         var result = marshalBoolean({});
-        (result === null).should.equal(true);
+        (result === undefined).should.equal(true);
     });
 
     withData({

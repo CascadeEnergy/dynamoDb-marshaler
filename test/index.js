@@ -3,26 +3,27 @@
 var proxyquire = require('proxyquire'),
     should = require('should'),
     sinon = require('sinon'),
-    marshaler = {
-        marshal: function() {}
-    },
-    marshalChain = sinon.stub();
-
-marshalChain.onFirstCall().returns(marshaler);
+    marshalService = {
+        marshal: function () {},
+        unmarshal: function() {}
+    };
 
 var sut = proxyquire('../index', {
-    './lib/marshalChain': marshalChain
+    './lib/marshalService': marshalService
 });
 
 describe('marshaler', function() {
-    var marshalStub;
+    var marshalStub,
+        unmarshalStub;
 
     beforeEach(function() {
-        marshalStub = sinon.stub(marshaler, 'marshal');
+        marshalStub = sinon.stub(marshalService, 'marshal');
+        unmarshalStub = sinon.stub(marshalService, 'unmarshal');
     });
 
     afterEach(function() {
         marshalStub.restore();
+        unmarshalStub.restore();
     });
 
     describe('marshalJson()', function() {
@@ -30,7 +31,7 @@ describe('marshaler', function() {
             sut.marshalItem.bind(null, 'foo').should.throw(TypeError, {message: 'Item must be plain object literal'});
         });
 
-        it('should delegate to marshaler.marshal to convert item to dynamoDb format', function() {
+        it('should delegate to marshalService.marshal to convert item to dynamoDb format', function() {
             var item = {},
                 expected = {},
                 marshaledItem = {M: expected},
@@ -47,7 +48,7 @@ describe('marshaler', function() {
     });
 
     describe('marshalJson()', function() {
-        it('should parse a json string and delegate to marshaler.marshal', function() {
+        it('should parse a json string and delegate to marshalItem', function() {
             var json = '{\"foo\": \"bar\"}',
                 item = {foo: 'bar'},
                 expected = {},

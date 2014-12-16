@@ -11,7 +11,7 @@ describe('marshalNumberSet', function() {
     }, function(item) {
         it('should return null', function() {
             var result = marshalNumberSet(item);
-            (result === null).should.eql(true);
+            (result === undefined).should.eql(true);
         });
     });
 

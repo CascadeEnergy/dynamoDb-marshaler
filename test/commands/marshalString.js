@@ -6,7 +6,7 @@ var marshalString = require('../../lib/commands/marshalString'),
 describe('marshalString', function() {
     it('should return null if item is not a string', function() {
         var result = marshalString({});
-        (result === null).should.equal(true);
+        (result === undefined).should.equal(true);
     });
 
     it('should marshal item to dynamoDb "S" format', function() {
