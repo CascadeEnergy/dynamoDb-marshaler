@@ -26,8 +26,13 @@ var unmarshalItem = function(item) {
     return unmarshaledItem;
 };
 
+var unmarshalJson = function(item) {
+    return JSON.stringify(unmarshalItem(item));
+};
+
 module.exports = {
     marshalJson: marshalJson,
     marshalItem: marshalItem,
-    unmarshalItem: unmarshalItem
+    unmarshalItem: unmarshalItem,
+    unmarshalJson: unmarshalJson,
 };

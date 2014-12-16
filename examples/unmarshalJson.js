@@ -1,12 +1,12 @@
 'use strict';
 
-var unmarshalItem = require('../index').unmarshalItem;
+var unmarshalJson = require('../index').unmarshalJson;
 
 var item = {
     username: {S: 'nackjicholson'},
     favoriteFoods: {SS: ['burritos', 'fried chicken', 'pad kee mao']}
 };
 
-var obj = unmarshalItem(item);
+var json = unmarshalJson(item);
 
-console.log(JSON.stringify(obj));
+console.log(json);

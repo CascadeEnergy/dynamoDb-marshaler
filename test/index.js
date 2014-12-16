@@ -43,7 +43,7 @@ describe('marshaler', function() {
 
             marshalStub.calledOnce.should.equal(true);
 
-            actual.should.eql(expected);
+            actual.should.equal(expected);
         });
     });
 
@@ -61,7 +61,44 @@ describe('marshaler', function() {
 
             marshalStub.calledOnce.should.equal(true);
 
-            actual.should.eql(expected);
+            actual.should.equal(expected);
+        });
+    });
+
+    describe('unmarshalItem()', function() {
+       it('should throw TypeError if item passed in is not an object literal', function() {
+           sut.unmarshalItem.bind(null, 'foo').should.throw(TypeError, {message: 'Item must be plain object literal'});
+       });
+
+       it('should delegate to marshalService.unmarshal to convert dynamoDb format object to normal object', function() {
+           var item = {},
+               unmarshaledItem = {},
+               actual;
+
+           unmarshalStub.withArgs({M: item}).returns(unmarshaledItem);
+
+           actual = sut.unmarshalItem(item);
+
+           unmarshalStub.calledOnce.should.equal(true);
+
+           actual.should.equal(unmarshaledItem);
+       });
+    });
+
+    describe('unmarshalJson()', function() {
+        it('should take a javascript object, unmarshal it and stringify it as json', function() {
+
+            var item = {},
+                unmarshaledItem = {},
+                actual;
+
+            unmarshalStub.withArgs({M: item}).returns(unmarshaledItem);
+
+            actual = sut.unmarshalJson(item);
+
+            unmarshalStub.calledOnce.should.equal(true);
+
+            actual.should.eql(JSON.stringify(unmarshaledItem));
         });
     });
 });
