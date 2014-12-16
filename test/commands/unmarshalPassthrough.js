@@ -4,7 +4,7 @@ var unmarshalPassThrough = require('../../lib/commands/unmarshalPassThrough'),
     withData = require('leche').withData;
 
 describe('unmarshalPassThrough', function() {
-    it('should return null if item does not contain a key which is a pass through type', function() {
+    it('should return undefined if item does not contain a key which is a pass through type', function() {
         var result = unmarshalPassThrough({FOO: 'bar'});
         (result === undefined).should.equal(true);
     });

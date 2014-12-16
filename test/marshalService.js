@@ -11,6 +11,11 @@ var proxyquire = require('proxyquire'),
     marshalList = sinon.stub(),
     marshalMap = sinon.stub(),
     unmarshalPassThrough = sinon.stub(),
+    unmarshalNumber = sinon.stub(),
+    unmarshalNumberSet = sinon.stub(),
+    unmarshalNull = sinon.stub(),
+    unmarshalMap = sinon.stub(),
+    unmarshalList = sinon.stub(),
     marshalService = proxyquire('../lib/marshalService', {
         './commands/marshalString': marshalString,
         './commands/marshalNumber': marshalNumber,
@@ -20,7 +25,12 @@ var proxyquire = require('proxyquire'),
         './commands/marshalNumberSet': marshalNumberSet,
         './commands/marshalList': marshalList,
         './commands/marshalMap': marshalMap,
-        './commands/unmarshalPassThrough': unmarshalPassThrough
+        './commands/unmarshalPassThrough': unmarshalPassThrough,
+        './commands/unmarshalNumber': unmarshalNumber,
+        './commands/unmarshalNumberSet': unmarshalNumberSet,
+        './commands/unmarshalNull': unmarshalNull,
+        './commands/unmarshalMap': unmarshalMap,
+        './commands/unmarshalList': unmarshalList
     });
 
 describe('marshalService', function() {
@@ -50,16 +60,20 @@ describe('marshalService', function() {
 
     describe('unmarshal()', function() {
         it('should only return the unmarshaled value returned by the first unmarshaler command which accepts the item', function() {
-            var item = {foo: {S: 'bar'}},
+            var item = {foo: {N: '42'}},
                 result;
 
-            unmarshalPassThrough.withArgs(item, marshalService.unmarshal).returns('foo');
+            unmarshalPassThrough.withArgs(item, marshalService.unmarshal).returns(undefined);
+            unmarshalNumber.withArgs(item, marshalService.unmarshal).returns(42);
 
             result = marshalService.unmarshal(item);
 
             unmarshalPassThrough.calledOnce.should.equal(true);
+            unmarshalNumber.calledOnce.should.equal(true);
 
-            result.should.eql('foo');
+
+
+            result.should.eql(42);
         });
     });
 });

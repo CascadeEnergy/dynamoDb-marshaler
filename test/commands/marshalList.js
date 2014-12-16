@@ -8,7 +8,7 @@ var marshalList = require('../../lib/commands/marshalList'),
 
 describe('marshalList', function() {
 
-    it('should return null if item is not an Array', function() {
+    it('should return undefined if item is not an Array', function() {
         var result = marshalList({}, marshal);
         (result === undefined).should.equal(true);
     });

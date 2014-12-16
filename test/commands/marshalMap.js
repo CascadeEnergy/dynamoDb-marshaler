@@ -15,7 +15,7 @@ describe('marshalMap', function() {
         marshal = sinon.stub();
     });
 
-    it('should return null if item is not a plain object', function() {
+    it('should return undefined if item is not a plain object', function() {
         var result = marshalMap([], marshal);
         (result === undefined).should.equal(true);
     });

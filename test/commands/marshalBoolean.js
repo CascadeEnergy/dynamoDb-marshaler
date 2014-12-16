@@ -5,7 +5,7 @@ var marshalBoolean = require('../../lib/commands/marshalBoolean'),
     withData = require('leche').withData;
 
 describe('marshalBoolean', function() {
-    it('should return null if item is not a Boolean', function() {
+    it('should return undefined if item is not a Boolean', function() {
         var result = marshalBoolean({});
         (result === undefined).should.equal(true);
     });

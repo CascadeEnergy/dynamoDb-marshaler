@@ -22,8 +22,7 @@ var marshalJson = function(json) {
 
 var unmarshalItem = function(item) {
     ensureItemIsHash(item);
-    var unmarshaledItem = marshalService.unmarshal({M: item});
-    return unmarshaledItem;
+    return marshalService.unmarshal({M: item});
 };
 
 var unmarshalJson = function(item) {
@@ -34,5 +33,5 @@ module.exports = {
     marshalJson: marshalJson,
     marshalItem: marshalItem,
     unmarshalItem: unmarshalItem,
-    unmarshalJson: unmarshalJson,
+    unmarshalJson: unmarshalJson
 };

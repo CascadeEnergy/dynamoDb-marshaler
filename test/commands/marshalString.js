@@ -4,7 +4,7 @@ var marshalString = require('../../lib/commands/marshalString'),
     should = require('should');
 
 describe('marshalString', function() {
-    it('should return null if item is not a string', function() {
+    it('should return undefined if item is not a string', function() {
         var result = marshalString({});
         (result === undefined).should.equal(true);
     });

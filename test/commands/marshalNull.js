@@ -5,7 +5,7 @@ var marshalNull = require('../../lib/commands/marshalNull'),
     withData = require('leche').withData;
 
 describe('marshalNull', function() {
-    it('should return null if item is not null or undefined', function() {
+    it('should return undefined if item is not null or undefined', function() {
         var result = marshalNull({});
         (result === undefined).should.equal(true);
     });

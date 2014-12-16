@@ -9,7 +9,7 @@ describe('marshalNumberSet', function() {
         'an item that is not an array': [{}],
         'an array that is not all numbers': [[42, 'foo']]
     }, function(item) {
-        it('should return null', function() {
+        it('should return undefined', function() {
             var result = marshalNumberSet(item);
             (result === undefined).should.eql(true);
         });

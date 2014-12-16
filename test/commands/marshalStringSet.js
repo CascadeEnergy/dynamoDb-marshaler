@@ -9,7 +9,7 @@ describe('marshalStringSet', function() {
         'an item that is not an array': [{}],
         'an array that is not all strings': [[42, 'foo']]
     }, function(item) {
-        it('should return null', function() {
+        it('should return undefined', function() {
             var result = marshalStringSet(item);
             (result === undefined).should.eql(true);
         });
