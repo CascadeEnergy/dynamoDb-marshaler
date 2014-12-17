@@ -1,8 +1,12 @@
 {
-  "name": "dynamoDb-marshaler",
+  "name": "dynamodb-marshaler",
   "version": "0.0.0",
   "description": "Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.",
   "main": "marshaler.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CascadeEnergy/dynamoDb-marshaler.git"
+  },
   "scripts": {
     "test": "mocha"
   },
@@ -17,5 +21,8 @@
   },
   "dependencies": {
     "lodash": "^2.4.1"
+  },
+  "engines": {
+    "node": ">=0.10.33"
   }
 }
