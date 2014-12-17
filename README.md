@@ -47,8 +47,9 @@ var dynamoDb = new AWS.DynamoDB();
 var data = dynamoDb.scan({
     TableName: 'users'
 }, function(err, data) {
-    var firstItem = data.Items[0]; // {username: {S: 'nackjicholson'}
-    console.log(unmarshalItem(firstItem); // {username: 'nackjicholson'}
+    // data.Items = [{username: {S: 'nackjicholson'}]
+    var items = data.Items.map(unmarshalItem);
+    console.log(unmarshalItem(items); // [{username: 'nackjicholson'}]
 });
 ```
 
