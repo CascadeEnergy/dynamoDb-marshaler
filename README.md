@@ -8,7 +8,7 @@ a case where I'm using binary types in json. If you need binary support, please 
 
 ## Why?
 
-Translation of DynamoDb `AttributeValue` objects is cumbersome and makes working with the [aws-sdk-js](https://github.com/aws/aws-sdk-js) and dynamo
+Translation of DynamoDb `AttributeValue` objects is cumbersome and makes working with the [aws-sdk-js](https://github.com/aws/aws-sdk-js)
 more difficult than it needs to be. This library abstracts away the verbose tiresome mappings and lets you work with standard javascript (JSON) data like
 you're used to.
 
