@@ -1,6 +1,6 @@
 'use strict';
 
-var marshalJson = require('../index').marshalJson;
+var marshalItem = require('../index').marshalItem;
 
 var item = {
     name: 'Will Vaughn',
@@ -32,10 +32,7 @@ var item = {
     luckyNumbers: [42, 98, 777]
 };
 
-var json = JSON.stringify(item);
-var dynamoDbItem = marshalJson(json);
-
-console.log(JSON.stringify(dynamoDbItem));
+console.log(JSON.stringify(marshalItem(item)));
 
 //{
 //    "name": {

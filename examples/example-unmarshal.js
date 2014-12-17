@@ -42,6 +42,39 @@ var item = {
     }
 };
 
-var json = unmarshalJson(item);
+// unmarshalJson() uses unmarshalItem() to do the work, but just stringifies the item to JSON for you.
+console.log(unmarshalJson(item));
 
-console.log(json);
+//{
+//    "name": "Will Vaughn",
+//    "age": 30,
+//    "employed": true,
+//    "relationshipStatus": null,
+//    "defaultAnswers": [
+//        "No.",
+//        42
+//    ],
+//    "appearance": {
+//        "height": 183,
+//        "weight": 79,
+//        "eyeColor": "brown",
+//        "ethnicity": {
+//            "whiteAmerican": true,
+//            "nativeAmerican": false,
+//            "asianAmerican": false,
+//            "africanAmerican": false,
+//            "nativeHawaiianOrPacificIslander": false,
+//            "someOtherRace": false
+//        }
+//    },
+//    "favoriteFoods": [
+//        "burritos",
+//        "fried chicken",
+//        "pad kee mao"
+//    ],
+//    "luckyNumbers": [
+//        42,
+//        98,
+//        777
+//    ]
+//}

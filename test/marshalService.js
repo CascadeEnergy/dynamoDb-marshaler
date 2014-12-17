@@ -70,8 +70,10 @@ describe('marshalService', function() {
 
             unmarshalPassThrough.calledOnce.should.equal(true);
             unmarshalNumber.calledOnce.should.equal(true);
-
-
+            unmarshalNumberSet.callCount.should.equal(0);
+            unmarshalNull.callCount.should.equal(0);
+            unmarshalMap.callCount.should.equal(0);
+            unmarshalList.callCount.should.equal(0);
 
             result.should.eql(42);
         });

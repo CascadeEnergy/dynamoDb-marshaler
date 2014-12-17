@@ -12,11 +12,11 @@ a case where I'm using binary types in json. If you need binary support, please 
 npm install dynamodb-marshaler
 ```
 
-## Basic Usage
+## Basic Marshaling
 
 ```javascript
 var AWS = require('aws-sdk'),
-    marshalItem = require('dynamoDb-marshaler').marshalItem;
+    marshalItem = require('dynamodb-marshaler').marshalItem;
     
 AWS.config.region = 'us-west-2';
 
@@ -28,11 +28,11 @@ dynamoDb.putItem({
 });
 ```
 
-## Unmarshaling
+## Basic Unmarshaling
 
 ```javascript
 var AWS = require('aws-sdk'),
-    unmarshalItem = require('dynamoDb-marshaler').unmarshalItem;
+    unmarshalItem = require('dynamodb-marshaler').unmarshalItem;
     
 AWS.config.region = 'us-west-2';
 
@@ -45,3 +45,11 @@ var data = dynamoDb.scan({
     console.log(unmarshalItem(items); // {username: 'nackjicholson'}
 });
 ```
+
+## JSON
+
+You can marshal directly from a JSON string. Or unmarshal a DynamoDb api response into a JSON string. Use `marshalJson` and `unmarshalJson`.
+
+## Examples
+
+More extensive examples can be found in the [examples](https://github.com/CascadeEnergy/dynamoDb-marshaler/tree/master/examples) directory.
