@@ -24,10 +24,10 @@ var ensureItemIsObject = function(callback) {
  * @param {Object} item Plain javascript object.
  * @returns {Object} The marshaled item dynamoDb compliant item.
  */
-var marshalItem = function(item) {
+var marshalItem = ensureItemIsObject(function(item) {
     var marshaledItem = marshalService.marshal(item);
     return marshaledItem.M;
-};
+});
 
 /**
  * Translates a JSON string into an object in DynamoDb format.
@@ -45,9 +45,9 @@ var marshalJson = function(json) {
  * @param {Object} item DynamoDb formatted object.
  * @returns {Object} A javascript object in normal form.
  */
-var unmarshalItem = function(item) {
+var unmarshalItem = ensureItemIsObject(function(item) {
     return marshalService.unmarshal({M: item});
-};
+});
 
 /**
  * Translates a DynamoDb formatted object, into a normally formatted object represented as a JSON string.
@@ -66,7 +66,7 @@ var unmarshalJson = function(item) {
  */
 module.exports = {
     marshalJson: marshalJson,
-    marshalItem: ensureItemIsObject(marshalItem),
-    unmarshalItem: ensureItemIsObject(unmarshalItem),
+    marshalItem: marshalItem,
+    unmarshalItem: unmarshalItem,
     unmarshalJson: unmarshalJson
 };
