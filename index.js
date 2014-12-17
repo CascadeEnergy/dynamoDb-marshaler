@@ -3,11 +3,19 @@
 var _ = require('lodash'),
     marshalService = require('./lib/marshalService');
 
-var ensureItemIsHash = function(item) {
-    if (_.isPlainObject(item)) {
-        return;
-    }
-    throw new TypeError('Item must be plain object literal');
+/**
+ * Function decorator, validates item is a javascript object.
+ *
+ * @param callback
+ * @returns {Function}
+ */
+var ensureItemIsObject = function(callback) {
+    return function(item) {
+        if (_.isPlainObject(item)) {
+            return callback(item);
+        }
+        throw new TypeError('Item must be plain object literal');
+    };
 };
 
 /**
@@ -15,12 +23,12 @@ var ensureItemIsHash = function(item) {
  *
  * @param {Object} item Plain javascript object.
  * @returns {Object} The marshaled item dynamoDb compliant item.
+ * @throws {TypeError}
  */
-var marshalItem = function(item) {
-    ensureItemIsHash(item);
+var marshalItem = ensureItemIsObject(function(item) {
     var marshaledItem = marshalService.marshal(item);
     return marshaledItem.M;
-};
+});
 
 /**
  * Translates a JSON string into an object in DynamoDb format.
@@ -37,11 +45,11 @@ var marshalJson = function(json) {
  *
  * @param {Object} item DynamoDb formatted object.
  * @returns {Object} A javascript object in normal form.
+ * @throws {TypeError}
  */
-var unmarshalItem = function(item) {
-    ensureItemIsHash(item);
+var unmarshalItem = ensureItemIsObject(function(item) {
     return marshalService.unmarshal({M: item});
-};
+});
 
 /**
  * Translates a DynamoDb formatted object, into a normally formatted object represented as a JSON string.
