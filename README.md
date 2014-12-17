@@ -6,6 +6,12 @@ Translates sane javascript objects (and JSON) into DynamoDb format and vice vers
 **Caveat** Does not yet work with Binary types (B and BS). I have personally never come across
 a case where I'm using binary types in json. If you need binary support, please let me know how it might be done, or contribute.
 
+## Why?
+
+Translation of DynamoDb `AttributeValue` objects is cumbersome and makes working with the [aws-sdk-js](https://github.com/aws/aws-sdk-js) and dynamo
+more difficult than it needs to be. This library abstracts away the verbose tiresome mappings and lets you work with standard javascript (JSON) data like
+you're used to.
+
 ## Install
 
 ```
