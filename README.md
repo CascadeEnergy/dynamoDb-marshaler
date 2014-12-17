@@ -49,7 +49,7 @@ var data = dynamoDb.scan({
 }, function(err, data) {
     // data.Items = [{username: {S: 'nackjicholson'}]
     var items = data.Items.map(unmarshalItem);
-    console.log(unmarshalItem(items); // [{username: 'nackjicholson'}]
+    console.log(items); // [{username: 'nackjicholson'}]
 });
 ```
 
