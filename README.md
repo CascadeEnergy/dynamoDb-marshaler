@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler.svg?branch=master)](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler)
 dynamoDb-marshaler
 ===
 
