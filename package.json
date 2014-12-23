@@ -8,7 +8,7 @@
     "url": "git://github.com/CascadeEnergy/dynamoDb-marshaler.git"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/.bin/gulp test"
   },
   "author": "",
   "license": "MIT",
