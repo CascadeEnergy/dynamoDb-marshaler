@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nackjicholson/dynamoDb-marshaler.svg?branch=master)](https://travis-ci.org/nackjicholson/dynamoDb-marshaler)
+
 dynamoDb-marshaler
 ===
 
