@@ -2,6 +2,7 @@
 
 var proxyquire = require('proxyquire'),
     sinon = require('sinon'),
+    withData = require('leche').withData,
     marshalString = sinon.stub(),
     marshalNumber = sinon.stub(),
     marshalBoolean = sinon.stub(),
@@ -34,6 +35,8 @@ var proxyquire = require('proxyquire'),
     });
 
 describe('marshalService', function() {
+    var invalidItem = new Buffer('foo');
+
     describe('marshal()', function() {
         it('should only be formatted by first command which accepts the value, after which the loop is exited.', function() {
             var item = 42,
@@ -55,6 +58,24 @@ describe('marshalService', function() {
             marshalMap.callCount.should.equal(0);
 
             result.should.eql({N: '42'});
+        });
+
+        withData({
+            'empty value': ['', 'Marshaling error: encountered empty value'],
+            'unexpected value': [invalidItem, 'Marshaling error: encountered unexpected type ' + invalidItem.toString()]
+        }, function(item, errorMessage) {
+            it('should throw a type error if none of the marshaler commands can handle the value properly', function() {
+                marshalString.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalNumber.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalBoolean.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalNull.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalStringSet.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalNumberSet.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalList.withArgs(item, marshalService.marshal).returns(undefined);
+                marshalMap.withArgs(item, marshalService.marshal).returns(undefined);
+
+                marshalService.marshal.bind(null, item).should.throw(TypeError, {message: errorMessage});
+            });
         });
     });
 
