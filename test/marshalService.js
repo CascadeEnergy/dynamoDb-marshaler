@@ -62,7 +62,7 @@ describe('marshalService', function() {
 
         withData({
             'empty value': ['', 'Marshaling error: encountered empty value'],
-            'unexpected value': [invalidItem, 'Marshaling error: encountered unexpected type ' + invalidItem.toString()]
+            'unexpected value': [invalidItem, 'Marshaling error: encountered unexpected item ' + invalidItem.toString()]
         }, function(item, errorMessage) {
             it('should throw a type error if none of the marshaler commands can handle the value properly', function() {
                 marshalString.withArgs(item, marshalService.marshal).returns(undefined);
@@ -81,7 +81,7 @@ describe('marshalService', function() {
 
     describe('unmarshal()', function() {
         it('should only return the unmarshaled value returned by the first unmarshaler command which accepts the item', function() {
-            var item = {foo: {N: '42'}},
+            var item = {N: '42'},
                 result;
 
             unmarshalPassThrough.withArgs(item, marshalService.unmarshal).returns(undefined);
@@ -97,6 +97,22 @@ describe('marshalService', function() {
             unmarshalList.callCount.should.equal(0);
 
             result.should.eql(42);
+        });
+
+        it('should throw a type error if the none of the unmarshal commands can handle the item', function() {
+            var item = {UNKNOWN: 'unknown'}
+
+            unmarshalPassThrough.withArgs(item, marshalService.unmarshal).returns(undefined);
+            unmarshalNumber.withArgs(item, marshalService.unmarshal).returns(undefined);
+            unmarshalNumberSet.withArgs(item, marshalService.unmarshal).returns(undefined);
+            unmarshalNull.withArgs(item, marshalService.unmarshal).returns(undefined);
+            unmarshalMap.withArgs(item, marshalService.unmarshal).returns(undefined);
+            unmarshalList.withArgs(item, marshalService.unmarshal).returns(undefined);
+
+            marshalService.unmarshal.bind(null, item).should.throw(
+                TypeError,
+                {message: 'Unmarshal error: encountered unexpected item ' + item}
+            );
         });
     });
 });
