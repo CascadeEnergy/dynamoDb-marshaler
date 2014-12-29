@@ -8,13 +8,13 @@ var item = {
     employed: true,
     relationshipStatus: undefined,
     defaultAnswers: [
-        "No.",
+        'No.',
         42
     ],
     appearance: {
         height: 183,
         weight: 79,
-        eyeColor: "brown",
+        eyeColor: 'brown',
         ethnicity: {
             whiteAmerican: true,
             nativeAmerican: false,
@@ -25,9 +25,9 @@ var item = {
         }
     },
     favoriteFoods: [
-        "burritos",
-        "fried chicken",
-        "pad kee mao"
+        'burritos',
+        'fried chicken',
+        'pad kee mao'
     ],
     luckyNumbers: [42, 98, 777]
 };

@@ -9,7 +9,7 @@ var item = {
     relationshipStatus: {NULL: true},
     defaultAnswers: {
         L: [
-            {S: "No."},
+            {S: 'No.'},
             {N: '42'}
         ]
     },
@@ -17,7 +17,7 @@ var item = {
         M: {
             height: {N: '183'},
             weight: {N: '79'},
-            eyeColor: {S: "brown"},
+            eyeColor: {S: 'brown'},
             ethnicity: {
                 M: {
                     whiteAmerican: {BOOL: true},
