@@ -64,7 +64,7 @@ describe('marshalService', function() {
             'empty value': ['', 'Marshaling error: encountered empty value'],
             'unexpected value': [invalidItem, 'Marshaling error: encountered unexpected item ' + invalidItem.toString()]
         }, function(item, errorMessage) {
-            it('should throw a type error if none of the marshaler commands can handle the value properly', function() {
+            it('should throw a type error if none of the marshaler commands can handle the item', function() {
                 marshalString.withArgs(item, marshalService.marshal).returns(undefined);
                 marshalNumber.withArgs(item, marshalService.marshal).returns(undefined);
                 marshalBoolean.withArgs(item, marshalService.marshal).returns(undefined);
