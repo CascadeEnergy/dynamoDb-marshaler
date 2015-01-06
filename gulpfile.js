@@ -1,8 +1,8 @@
 'use strict';
 
-var gulp = require('gulp'),
-    istanbul = require('gulp-istanbul'),
-    mocha = require('gulp-mocha');
+var gulp = require('gulp');
+var istanbul = require('gulp-istanbul');
+var mocha = require('gulp-mocha'); // jshint ignore:line
 
 gulp.task('test', function (cb) {
     gulp.src(['lib/**/*.js', 'index.js'])
