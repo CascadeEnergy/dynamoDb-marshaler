@@ -61,3 +61,8 @@ You can marshal directly from a JSON string. Or unmarshal a DynamoDb api respons
 ## Examples
 
 More extensive examples can be found in the [examples](https://github.com/CascadeEnergy/dynamoDb-marshaler/tree/master/examples) directory.
+
+## Contributions
+
+Please contribute. But make sure test coverage is 100% and that the code
+complies with the [Cascade Energy Style Guide for NodeJs](https://github.com/CascadeEnergy/node-style-guide)
