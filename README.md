@@ -4,6 +4,7 @@ dynamoDb-marshaler
 
 
 [![NPM](https://nodei.co/npm/dynamodb-marshaler.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dynamodb-marshaler/)
+
 Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.
 
 **Caveat** Does not yet work with Binary types (B and BS). I have personally never come across
