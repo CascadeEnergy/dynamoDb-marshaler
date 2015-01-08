@@ -4,32 +4,32 @@ var proxyquire = require('proxyquire');
 var should = require('should');
 var sinon = require('sinon');
 var marshalService = {
-  marshal: function () {},
-  unmarshal: function () {}
+  marshal: function() {},
+  unmarshal: function() {}
 };
 
 var sut = proxyquire('../index', {
   './lib/marshalService': marshalService
 });
 
-describe('marshaler', function () {
+describe('marshaler', function() {
   var marshalStub;
   var unmarshalStub;
 
-  beforeEach(function () {
+  beforeEach(function() {
     marshalStub = sinon.stub(marshalService, 'marshal');
     unmarshalStub = sinon.stub(marshalService, 'unmarshal');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     marshalStub.restore();
     unmarshalStub.restore();
   });
 
-  describe('marshalJson()', function () {
+  describe('marshalJson()', function() {
     it(
       'should throw TypeError if item passed in is not an object literal',
-      function () {
+      function() {
         sut
           .marshalItem
           .bind(null, 'foo')
@@ -43,7 +43,7 @@ describe('marshaler', function () {
     it(
       'should delegate to marshalService.marshal to convert item to ' +
       'dynamoDb format',
-      function () {
+      function() {
         var item = {};
         var expected = {};
         var marshaledItem = {M: expected};
@@ -60,8 +60,8 @@ describe('marshaler', function () {
     );
   });
 
-  describe('marshalJson()', function () {
-    it('should parse a json string and delegate to marshalItem', function () {
+  describe('marshalJson()', function() {
+    it('should parse a json string and delegate to marshalItem', function() {
       var json = '{\"foo\": \"bar\"}';
       var item = {foo: 'bar'};
       var expected = {};
@@ -78,10 +78,10 @@ describe('marshaler', function () {
     });
   });
 
-  describe('unmarshalItem()', function () {
+  describe('unmarshalItem()', function() {
     it(
       'should throw TypeError if item passed in is not an object literal',
-      function () {
+      function() {
         sut
           .unmarshalItem
           .bind(null, 'foo')
@@ -93,10 +93,10 @@ describe('marshaler', function () {
     it(
       'should delegate to marshalService.unmarshal to convert dynamoDb ' +
       'format object to normal object',
-      function () {
-        var item = {},
-          unmarshaledItem = {},
-          actual;
+      function() {
+        var item = {};
+        var unmarshaledItem = {};
+        var actual;
 
         unmarshalStub.withArgs({M: item}).returns(unmarshaledItem);
 
@@ -109,22 +109,22 @@ describe('marshaler', function () {
     );
   });
 
-  describe('unmarshalJson()', function () {
+  describe('unmarshalJson()', function() {
     it(
       'should take a javascript object, unmarshal it and stringify it as json',
-      function () {
+      function() {
+        var item = {};
+        var unmarshaledItem = {};
+        var actual;
 
-      var item = {},
-        unmarshaledItem = {},
-        actual;
+        unmarshalStub.withArgs({M: item}).returns(unmarshaledItem);
 
-      unmarshalStub.withArgs({M: item}).returns(unmarshaledItem);
+        actual = sut.unmarshalJson(item);
 
-      actual = sut.unmarshalJson(item);
+        unmarshalStub.calledOnce.should.equal(true);
 
-      unmarshalStub.calledOnce.should.equal(true);
-
-      actual.should.eql(JSON.stringify(unmarshaledItem));
-    });
+        actual.should.eql(JSON.stringify(unmarshaledItem));
+      }
+    );
   });
 });

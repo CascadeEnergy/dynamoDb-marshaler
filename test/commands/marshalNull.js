@@ -1,10 +1,10 @@
 'use strict';
 
-var marshalNull = require('../../lib/commands/marshalNull'),
-  should = require('should'),
-  withData = require('leche').withData;
+var marshalNull = require('../../lib/commands/marshalNull');
+var should = require('should');
+var withData = require('leche').withData;
 
-describe('marshalNull', function () {
+describe('marshalNull', function() {
   it('should return undefined if item is not null or undefined', function () {
     var result = marshalNull({});
     (result === undefined).should.equal(true);

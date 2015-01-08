@@ -2,10 +2,10 @@
 
 var unmarshalNull = require('../../lib/commands/unmarshalNull');
 
-describe('unmarshalNull', function () {
+describe('unmarshalNull', function() {
   it(
     'should return undefined if item does not have "NULL" property',
-    function () {
+    function() {
       var result = unmarshalNull('foo');
       (result === undefined).should.equal(true);
     }
@@ -14,7 +14,7 @@ describe('unmarshalNull', function () {
   it(
     'should unmarshal each attribute of the map and return ' +
     'a unmarshaled object',
-    function () {
+    function() {
       var result = unmarshalNull({NULL: true});
       (result === null).should.eql(true);
     }

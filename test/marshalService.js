@@ -34,14 +34,14 @@ var marshalService = proxyquire('../lib/marshalService', {
     './commands/unmarshalList': unmarshalList
   });
 
-describe('marshalService', function () {
+describe('marshalService', function() {
   var invalidItem = new Buffer('foo');
 
-  describe('marshal()', function () {
+  describe('marshal()', function() {
     it(
       'should only be formatted by first command which accepts the value, ' +
       'after which the loop is exited.',
-      function () {
+      function() {
         var item = 42;
         var result;
 
@@ -74,11 +74,11 @@ describe('marshalService', function () {
         'Marshaling error: encountered unexpected item ' +
         invalidItem.toString()
       ]
-    }, function (item, errorMessage) {
+    }, function(item, errorMessage) {
       it(
         'should throw a type error if none of the marshaler commands' +
         'can handle the item',
-        function () {
+        function() {
           marshalString
             .withArgs(item, marshalService.marshal)
             .returns(undefined);
@@ -114,11 +114,11 @@ describe('marshalService', function () {
     });
   });
 
-  describe('unmarshal()', function () {
+  describe('unmarshal()', function() {
     it(
       'should only return the unmarshaled value returned by the first ' +
       'unmarshaler command which accepts the item',
-      function () {
+      function() {
         var item = {N: '42'};
         var result;
 
@@ -145,7 +145,7 @@ describe('marshalService', function () {
     it(
       'should throw a type error if the none of the unmarshal commands ' +
       'can handle the item',
-      function () {
+      function() {
         var item = {UNKNOWN: 'unknown'};
 
         unmarshalPassThrough

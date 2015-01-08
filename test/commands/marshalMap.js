@@ -4,25 +4,25 @@ var marshalMap = require('../../lib/commands/marshalMap');
 var should = require('should');
 var sinon = require('sinon');
 
-var marshal = function (item) {
+var marshal = function(item) {
   return item + ' marshaled';
 };
 
-describe('marshalMap', function () {
+describe('marshalMap', function() {
   var marshal;
 
-  beforeEach(function () {
+  beforeEach(function() {
     marshal = sinon.stub();
   });
 
-  it('should return undefined if item is not a plain object', function () {
+  it('should return undefined if item is not a plain object', function() {
     var result = marshalMap([], marshal);
     (result === undefined).should.equal(true);
   });
 
   it(
     'should marshal each Map value to the proper dynamoDb format',
-    function () {
+    function() {
       var item = {foo: 'bar', num: 42};
       var marshaledItem = {foo: 'bar marshaled', num: '42 marshaled'};
       var expected = {M: marshaledItem};
