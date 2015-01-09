@@ -42,7 +42,8 @@ var item = {
   }
 };
 
-// unmarshalJson() uses unmarshalItem() to do the work, but just stringifies the item to JSON for you.
+// unmarshalJson() uses unmarshalItem() to do the work.
+// It just stringifies the item to JSON for you.
 console.log(unmarshalJson(item));
 
 //{
