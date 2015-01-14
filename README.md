@@ -2,6 +2,8 @@
 dynamoDb-marshaler
 ===
 
+[![NPM](https://nodei.co/npm/dynamodb-marshaler.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dynamodb-marshaler/)
+
 Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.
 
 **Caveat** Does not yet work with Binary types (B and BS). I have personally never come across
@@ -22,35 +24,33 @@ npm install dynamodb-marshaler
 ## Basic Marshaling
 
 ```javascript
-var AWS = require('aws-sdk'),
-    marshalItem = require('dynamodb-marshaler').marshalItem;
+var AWS = require('aws-sdk');
+var marshalItem = require('dynamodb-marshaler').marshalItem;
     
 AWS.config.region = 'us-west-2';
-
 var dynamoDb = new AWS.DynamoDB();
 
 dynamoDb.putItem({
-    TableName: 'users',
-    Item: marshalItem({username: 'nackjicholson'})  // {username: {S: 'nackjicholson'}}
+  TableName: 'users',
+  Item: marshalItem({username: 'nackjicholson'})  // {username: {S: 'nackjicholson'}}
 });
 ```
 
 ## Basic Unmarshaling
 
 ```javascript
-var AWS = require('aws-sdk'),
-    unmarshalItem = require('dynamodb-marshaler').unmarshalItem;
+var AWS = require('aws-sdk');
+var unmarshalItem = require('dynamodb-marshaler').unmarshalItem;
     
 AWS.config.region = 'us-west-2';
-
 var dynamoDb = new AWS.DynamoDB();
 
 var data = dynamoDb.scan({
-    TableName: 'users'
+  TableName: 'users'
 }, function(err, data) {
-    // data.Items = [{username: {S: 'nackjicholson'}]
-    var items = data.Items.map(unmarshalItem);
-    console.log(items); // [{username: 'nackjicholson'}]
+  // data.Items = [{username: {S: 'nackjicholson'}]
+  var items = data.Items.map(unmarshalItem);
+  console.log(items); // [{username: 'nackjicholson'}]
 });
 ```
 
@@ -61,3 +61,8 @@ You can marshal directly from a JSON string. Or unmarshal a DynamoDb api respons
 ## Examples
 
 More extensive examples can be found in the [examples](https://github.com/CascadeEnergy/dynamoDb-marshaler/tree/master/examples) directory.
+
+## Contributions
+
+Please contribute. But make sure test coverage is 100% and that the code
+complies with the [Cascade Energy Style Guide for NodeJs](https://github.com/CascadeEnergy/node-style-guide)

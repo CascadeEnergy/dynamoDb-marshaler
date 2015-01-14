@@ -1,17 +1,17 @@
 'use strict';
 
-var gulp = require('gulp'),
-    istanbul = require('gulp-istanbul'),
-    mocha = require('gulp-mocha');
+var gulp = require('gulp');
+var gulpIstanbul = require('gulp-istanbul');
+var gulpMocha = require('gulp-mocha');
 
-gulp.task('test', function (cb) {
-    gulp.src(['lib/**/*.js', 'index.js'])
-        .pipe(istanbul())
-        .pipe(istanbul.hookRequire())
-        .on('finish', function () {
-            gulp.src(['test/**/*.js'])
-                .pipe(mocha())
-                .pipe(istanbul.writeReports())
-                .on('end', cb);
-        });
+gulp.task('test', function(cb) {
+  gulp.src(['lib/**/*.js', 'index.js'])
+    .pipe(gulpIstanbul())
+    .pipe(gulpIstanbul.hookRequire())
+    .on('finish', function() {
+      gulp.src(['test/**/*.js'])
+        .pipe(gulpMocha())
+        .pipe(gulpIstanbul.writeReports())
+        .on('end', cb);
+    });
 });
