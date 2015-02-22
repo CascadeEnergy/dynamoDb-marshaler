@@ -72,7 +72,7 @@ Javascript has one list type -- arrays, but DynamoDB has sets and lists. How doe
 
 Here's a table:
 
-| criteria              | input                 | marshaled value                                    |
+|                       | input                 | marshaled value                                    |
 | --------------------- | --------------------- | -------------------------------------------------- |
 | Strings/No duplicates | ["foo", "bar"]        | {"SS": ["foo", "bar"]}                             |
 | Numbers/No duplicates | [42, 43]              | {"NS": ["42", "43"]}                               |
