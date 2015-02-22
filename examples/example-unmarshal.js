@@ -39,6 +39,22 @@ var item = {
   },
   luckyNumbers: {
     NS: ['42', '98', '777']
+  },
+  empty: {
+    L: []
+  },
+  duplicateList: {
+    L: [
+      {
+        S: 'foo'
+      },
+      {
+        S: 'bar'
+      },
+      {
+        S: 'foo'
+      }
+    ]
   }
 };
 
@@ -66,5 +82,7 @@ console.log(unmarshalJson(item));
 //    }
 //  },
 //  "favoriteFoods": ["burritos", "fried chicken", "pad kee mao"],
-//  "luckyNumbers": [42, 98, 777]
+//  "luckyNumbers": [42, 98, 777],
+//  "empty": [],
+//  "duplicateList": ["foo", "bar", "foo"]
 //}

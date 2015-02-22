@@ -6,8 +6,10 @@ var withData = require('leche').withData;
 
 describe('marshalStringSet', function() {
   withData({
-    'an item that is not an array': [{}],
-    'an array that is not all strings': [[42, 'foo']]
+    'a non array': [{}],
+    'an empty array': [[]],
+    'an array that is not all strings': [[42, 'foo']],
+    'an array with duplicates': [['foo', 'bar', 'foo']]
   }, function(item) {
     it('should return undefined', function() {
       var result = marshalStringSet(item);
