@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-marshaler",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.",
   "main": "marshaler.js",
   "repository": {
