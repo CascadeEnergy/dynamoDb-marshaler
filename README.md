@@ -62,6 +62,24 @@ You can marshal directly from a JSON string. Or unmarshal a DynamoDb api respons
 
 More extensive examples can be found in the [examples](https://github.com/CascadeEnergy/dynamoDb-marshaler/tree/master/examples) directory.
 
+## Understanding the rules
+
+#### Empty strings
+DynamoDB does not allow saving of an empty string `""`. The marshaler treats this as an error.
+
+#### Sets vs Lists
+Javascript has one list type -- arrays, but DynamoDB has sets and lists. How does the marshaler distinguish between the two?
+
+Here's a table:
+
+|                       | input                 | marshaled value                                    |
+| --------------------- | --------------------- | -------------------------------------------------- |
+| Strings/No duplicates | ["foo", "bar"]        | {"SS": ["foo", "bar"]}                             |
+| Numbers/No duplicates | [42, 43]              | {"NS": ["42", "43"]}                               |
+| Empty                 | []                    | {"L": []}                                          |
+| Mixed                 | [42, "foo", null]     | {"L": [{"N": "42"}, {"S": "foo"}, {"NULL": true}]} |
+| Duplicates            | ["foo", "bar", "foo"] | {"L": [{"S": "foo"}, {"S": "bar"}, {"S": "foo"}]}  |
+
 ## Contributions
 
 Please contribute. But make sure test coverage is 100% and that the code

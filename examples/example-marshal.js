@@ -22,7 +22,9 @@ var item = {
     }
   },
   favoriteFoods: ['burritos', 'fried chicken', 'pad kee mao'],
-  luckyNumbers: [42, 98, 777]
+  luckyNumbers: [42, 98, 777],
+  empty: [],
+  duplicateList: ['foo', 'bar', 'foo']
 };
 
 console.log(JSON.stringify(marshalItem(item)));
@@ -97,6 +99,22 @@ console.log(JSON.stringify(marshalItem(item)));
 //      "42",
 //      "98",
 //      "777"
+//    ]
+//  },
+//  "empty": {
+//    "L": []
+//  },
+//  "duplicateList": {
+//    "L": [
+//      {
+//        "S": "foo"
+//      },
+//      {
+//        "S": "bar"
+//      },
+//      {
+//        "S": "foo"
+//      }
 //    ]
 //  }
 //}
