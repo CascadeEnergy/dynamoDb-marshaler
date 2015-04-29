@@ -80,6 +80,18 @@ Here's a table:
 | Mixed                 | [42, "foo", null]     | {"L": [{"N": "42"}, {"S": "foo"}, {"NULL": true}]} |
 | Duplicates            | ["foo", "bar", "foo"] | {"L": [{"S": "foo"}, {"S": "bar"}, {"S": "foo"}]}  |
 
+## Methods
+
+**.marshalItem** (alias `.toDDB`)
+**.unmarshalItem** (alias `.toJS`)
+**.marshalJson**
+**.unmarshalJson**
+
+## Browser
+
+In the `./dist` directory of this repo there is a browser compatible version of this library which can be used as a
+browser global, AMD, or CommonJS/Node module. Check the `examples/example.html` file for a very simple use of it.
+
 ## Contributions
 
 Please contribute. But make sure test coverage is 100% and that the code
