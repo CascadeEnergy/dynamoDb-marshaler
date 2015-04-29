@@ -2,7 +2,7 @@
   "name": "dynamodb-marshaler",
   "version": "1.0.0",
   "description": "Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.",
-  "main": "marshaler.js",
+  "main": "dynamodb-marshaler.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/CascadeEnergy/dynamoDb-marshaler.git"
@@ -20,15 +20,15 @@
     "gulp-jshint": "^1.10.0",
     "gulp-load-plugins": "^0.10.0",
     "gulp-mocha": "^2.0.1",
-    "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.0.0",
+    "isparta": "^3.0.3",
     "jshint-stylish": "^1.0.1",
     "leche": "^2.1.1",
     "mocha": "^2.2.4",
     "sinon": "^1.14.1"
   },
   "dependencies": {
-    "lodash": "^2.4.1"
+    "lodash": "^3.7.0"
   },
   "engines": {
     "node": ">=0.10.33"

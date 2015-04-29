@@ -1,8 +1,16 @@
+require('babel/polyfill');
+import marshalItem from './marshalItem';
+import marshalJson from './marshalJson';
+import unmarshalItem from './unmarshalItem';
+import unmarshalJson from './unmarshalJson';
 
-let helloBabel = {
-  sayHello(subject='Babel') {
-    console.log(`hello ${subject}`);
-  }
+let marshaler = {
+  marshalItem,
+  marshalJson,
+  toDDB: marshalItem,
+  toJS: unmarshalItem,
+  unmarshalItem,
+  unmarshalJson
 };
 
-export default helloBabel;
+export default marshaler;

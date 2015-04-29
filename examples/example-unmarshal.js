@@ -1,6 +1,6 @@
 'use strict';
 
-var unmarshalJson = require('../index').unmarshalJson;
+var unmarshalJson = require('../unmarshalJson');
 
 var item = {
   name: {S: 'Will Vaughn'},

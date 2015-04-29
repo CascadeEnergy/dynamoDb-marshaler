@@ -1,6 +1,6 @@
 'use strict';
 
-var marshalItem = require('../index').marshalItem;
+var marshalItem = require('../dynamodb-marshaler').marshalItem;
 
 var item = {
   name: 'Will Vaughn',
@@ -27,7 +27,7 @@ var item = {
   duplicateList: ['foo', 'bar', 'foo']
 };
 
-console.log(JSON.stringify(marshalItem(item)));
+console.log(JSON.stringify(marshalItem(item), null, 2));
 
 //{
 //  "name": {
