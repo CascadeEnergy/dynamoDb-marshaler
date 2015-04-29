@@ -3,21 +3,28 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Marshaler Example</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 </head>
 <body>
-    <textarea id="dynamodb-item" name="dynamodb-item" rows="10" cols="50">{"foo": {"S": "bar"}}</textarea>
-    <button id="marshal-button">Marhsal</button>
-    <div id="content"></div>
+    <div class="container">
+        <form>
+            <label for="dynamodb-item">DynamoDb Item</label>
+            <textarea id="dynamodb-item" name="dynamodb-item" class="form-control" rows="10">{"foo": {"S": "bar"}}</textarea>
+        </form>
+        <button id="marshal-button" class="btn">Click to Transform</button>
+        <pre id="content"></pre>
+    </div>
 </body>
 <script type="text/javascript" src="../dist/dynamodb-marshaler.js"></script>
 <script type="text/javascript">
     window.onload = function() {
+        marshalContent();
         document.getElementById('marshal-button').onclick = marshalContent;
-    };
 
-    function marshalContent(e) {
-        var text = document.getElementById('dynamodb-item').value;
-        document.getElementById('content').innerHTML = dynamodbMarshaler.unmarshalJson(JSON.parse(text));
-    }
+        function marshalContent() {
+            var text = document.getElementById('dynamodb-item').value;
+            document.getElementById('content').innerHTML = dynamodbMarshaler.unmarshalJson(JSON.parse(text));
+        }
+    };
 </script>
 </html>
