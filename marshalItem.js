@@ -14,6 +14,12 @@ var _toDDB = require('./lib/converter');
 
 require('babel/polyfill');
 
+/**
+ * Translates a javascript object into a format ready for DynamoDb.
+ *
+ * @param {Object} item Plain javascript object.
+ * @returns {Object} The marshaled dynamoDb item.
+ */
 function marshalItem(item) {
   var marshaledItem = _toDDB.toDDB(item);
   return marshaledItem.M;

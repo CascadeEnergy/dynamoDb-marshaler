@@ -16,18 +16,24 @@
   "devDependencies": {
     "babel": "^5.1.13",
     "babelify": "^6.0.2",
+    "browserify": "^9.0.8",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
+    "gulp-file": "^0.2.0",
     "gulp-istanbul": "^0.8.1",
     "gulp-jshint": "^1.10.0",
     "gulp-load-plugins": "^0.10.0",
     "gulp-mocha": "^2.0.1",
     "gulp-plumber": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-streamify": "0.0.5",
+    "gulp-uglify": "^1.2.0",
     "isparta": "^3.0.3",
     "jshint-stylish": "^1.0.1",
     "leche": "^2.1.1",
     "mocha": "^2.2.4",
-    "sinon": "^1.14.1"
+    "sinon": "^1.14.1",
+    "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
     "lodash": "^3.7.0"

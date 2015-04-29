@@ -1,8 +1,12 @@
 'use strict';
 
+var babelify = require('babelify');
+var browserify = require('browserify');
 var gulp = require('gulp');
-var isparta = require('isparta');
 var gulpLoadPlugins = require('gulp-load-plugins');
+var isparta = require('isparta');
+var source = require('vinyl-source-stream');
+
 var plugins = gulpLoadPlugins();
 
 function createLintTask(taskName, files) {
@@ -26,11 +30,32 @@ createLintTask('lint-src', ['src/**/*.js']);
 // Lint our test code
 createLintTask('lint-test', ['test/**/*.js']);
 
-gulp.task('build', function () {
+gulp.task('build-node', ['lint-src'], function() {
   return gulp.src('src/**/*.js')
     .pipe(plugins.babel())
     .pipe(gulp.dest(''));
 });
+
+gulp.task('build-browser', ['lint-src'], function() {
+  var b = browserify('./src/dynamodb-marshaler.js', {standalone: 'dynamodb-marshaler'});
+  var bstream;
+
+  b.transform(babelify);
+  bstream = b.bundle();
+  return bstream
+    .on('error', function(err){
+      console.log(err.message);
+      this.emit('end');
+    })
+    .pipe(plugins.plumber())
+    .pipe(source('dynamodb-marshaler.js'))
+    .pipe(gulp.dest('./dist'))
+    .pipe(plugins.rename('./dist/dynamodb-marshaler.min.js'))
+    .pipe(plugins.streamify(plugins.uglify))
+    .pipe(gulp.dest(''));
+});
+
+gulp.task('build', ['build-node', 'build-browser']);
 
 gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
   require('babel/register')({ modules: 'common' });
