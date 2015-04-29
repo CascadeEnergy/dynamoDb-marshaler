@@ -94,5 +94,5 @@ browser global, AMD, or CommonJS/Node module. Check the `examples/example.html` 
 
 ## Contributions
 
-Please contribute. But make sure test coverage is 100% and that the code
-complies with the [Cascade Energy Style Guide for NodeJs](https://github.com/CascadeEnergy/node-style-guide)
+This module is written in ES6, and transpiled to ES5 by babel. Please contribute. But make sure test coverage is 100%
+and that the code complies with the [Cascade Energy Style Guide for NodeJs](https://github.com/CascadeEnergy/node-style-guide)
