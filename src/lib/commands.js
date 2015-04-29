@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-// Command lists
+// Marshal command chain
 export var marshalCommandList = [
   marshalString,
   marshalNumber,
@@ -12,6 +12,7 @@ export var marshalCommandList = [
   marshalMap
 ];
 
+// Unmarshal command chain
 export var unmarshalCommandList = [
   unmarshalPassThrough,
   unmarshalNumber,
@@ -22,6 +23,12 @@ export var unmarshalCommandList = [
   unmarshalList
 ];
 
+/**
+ * Converts boolean value to DynamoDb "BOOL"
+ *
+ * @param item
+ * @returns {*}
+ */
 export function marshalBoolean(item) {
   if (!_.isBoolean(item)) {
     return undefined;
@@ -29,6 +36,13 @@ export function marshalBoolean(item) {
   return {BOOL: item};
 }
 
+/**
+ * Converts mixed array to DynamoDb "L"
+ *
+ * @param item
+ * @param marshal
+ * @returns {*}
+ */
 export function marshalList(item, marshal) {
   if (!_.isArray(item)) {
     return undefined;
@@ -38,7 +52,15 @@ export function marshalList(item, marshal) {
   return {L: item};
 }
 
+/**
+ * Converts object literal to DynamoDb "M"
+ *
+ * @param item
+ * @param marshal
+ * @returns {*}
+ */
 export function marshalMap(item, marshal) {
+  // Todo make this accept ES6 Map or Object Literal
   if (!_.isPlainObject(item)) {
     return undefined;
   }
@@ -51,6 +73,12 @@ export function marshalMap(item, marshal) {
   return {M: item};
 }
 
+/**
+ * Converts null to DynamoDb "NULL"
+ *
+ * @param item
+ * @returns {*}
+ */
 export function marshalNull(item) {
   if (!_.isNull(item) && !_.isUndefined(item)) {
     return undefined;
@@ -58,6 +86,12 @@ export function marshalNull(item) {
   return {NULL: true};
 }
 
+/**
+ * Converts number to DynamoDb "N"
+ *
+ * @param item
+ * @returns {*}
+ */
 export function marshalNumber(item) {
   if (!_.isNumber(item)) {
     return undefined;
@@ -65,6 +99,12 @@ export function marshalNumber(item) {
   return {N: item.toString()};
 }
 
+/**
+ * Helper function for arrays to DynamoDb "NS"
+ *
+ * @param arr
+ * @returns {*}
+ */
 function marshalArrayToNumberSet(arr) {
   if (
     _.isEmpty(arr) ||
@@ -81,6 +121,12 @@ function marshalArrayToNumberSet(arr) {
   return { NS: arr };
 }
 
+/**
+ * Converts Arrays and Sets to DynamoDb "NS"
+ *
+ * @param item
+ * @returns {*}
+ */
 export function marshalNumberSet(item) {
   if (_.isArray(item)) {
     return marshalArrayToNumberSet(item);
@@ -93,6 +139,12 @@ export function marshalNumberSet(item) {
   return undefined;
 }
 
+/**
+ * Converts strings to DynamoDb "S"
+ *
+ * @param item
+ * @returns {*}
+ */
 export function marshalString(item) {
   if (!_.isString(item) || _.isEmpty(item)) {
     return undefined;
@@ -100,6 +152,12 @@ export function marshalString(item) {
   return {S: item};
 }
 
+/**
+ * Helper function for arrays to DynamoDb "SS"
+ *
+ * @param arr
+ * @returns {*}
+ */
 function marshalArrayToStringSet(arr) {
   if (
     _.isEmpty(arr) ||
@@ -112,6 +170,12 @@ function marshalArrayToStringSet(arr) {
   return {SS: arr};
 }
 
+/**
+ * Converts Arrays and Sets to DynamoDb "SS"
+ *
+ * @param item
+ * @returns {*}
+ */
 export function marshalStringSet(item) {
   if (_.isArray(item)) {
     return marshalArrayToStringSet(item);
@@ -124,6 +188,13 @@ export function marshalStringSet(item) {
   return undefined;
 }
 
+/**
+ * Converts DynamoDb "L" to mixed array
+ *
+ * @param item
+ * @param unmarshal
+ * @returns {*}
+ */
 export function unmarshalList(item, unmarshal) {
   if (!_.has(item, 'L')) {
     return undefined;
@@ -132,7 +203,15 @@ export function unmarshalList(item, unmarshal) {
   return _.map(item.L, unmarshal);
 }
 
+/**
+ * Converts DynamoDb "M" to object literal
+ *
+ * @param item
+ * @param unmarshal
+ * @returns {*}
+ */
 export function unmarshalMap(item, unmarshal) {
+  // Todo Make this convert to ES6 Map instead of object literal
   if (!_.has(item, 'M')) {
     return undefined;
   }
@@ -140,6 +219,12 @@ export function unmarshalMap(item, unmarshal) {
   return _.mapValues(item.M, unmarshal);
 }
 
+/**
+ * Converts DynamoDb "NULL" to null
+ *
+ * @param item
+ * @returns {*}
+ */
 export function unmarshalNull(item) {
   if (!_.has(item, 'NULL')) {
     return undefined;
@@ -148,6 +233,12 @@ export function unmarshalNull(item) {
   return null;
 }
 
+/**
+ * Converts DynamoDb "N" to Number
+ *
+ * @param item
+ * @returns {*}
+ */
 export function unmarshalNumber(item) {
   if (!_.has(item, 'N')) {
     return undefined;
@@ -156,6 +247,12 @@ export function unmarshalNumber(item) {
   return parseFloat(item.N);
 }
 
+/**
+ * Converts DynamoDb "NS" to Set of Numbers
+ *
+ * @param item
+ * @returns {*}
+ */
 export function unmarshalNumberSet(item) {
   if (!_.has(item, 'NS')) {
     return undefined;
@@ -164,6 +261,12 @@ export function unmarshalNumberSet(item) {
   return new Set(_.map(item.NS, parseFloat));
 }
 
+/**
+ * Converts DynamoDb "SS" to Set of Strings
+ *
+ * @param item
+ * @returns {*}
+ */
 export function unmarshalStringSet(item) {
   if (!_.has(item, 'SS')) {
     return undefined;
@@ -172,6 +275,12 @@ export function unmarshalStringSet(item) {
   return new Set(item.SS);
 }
 
+/**
+ * Converts DynamoDb "S", "B", "BS", "BOOL" to values.
+ *
+ * @param item
+ * @returns {*}
+ */
 export function unmarshalPassThrough(item) {
   let typeList = ['S', 'B', 'BS', 'BOOL'];
 
