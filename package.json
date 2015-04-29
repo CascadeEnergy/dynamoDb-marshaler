@@ -8,12 +8,14 @@
     "url": "git://github.com/CascadeEnergy/dynamoDb-marshaler.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp test"
+    "test": "./node_modules/.bin/gulp test",
+    "browser-build": "browserify src/dynamodb-marshaler.js --standalone dynamodb-marshaler -t babelify --outfile dist/dynamodb-marshaler.js"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "babel": "^5.1.13",
+    "babelify": "^6.0.2",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
     "gulp-istanbul": "^0.8.1",
