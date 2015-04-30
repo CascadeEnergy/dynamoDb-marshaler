@@ -9,7 +9,7 @@
     <div class="container">
         <form>
             <label for="dynamodb-item">DynamoDb Item</label>
-            <textarea id="dynamodb-item" name="dynamodb-item" class="form-control" rows="10">{"foo": {"S": "bar"}}</textarea>
+            <textarea id="dynamodb-item" name="dynamodb-item" class="form-control" rows="10">{"foo": "bar"}</textarea>
         </form>
         <button id="marshal-button" class="btn">Click to Transform</button>
         <pre id="content"></pre>
@@ -22,8 +22,9 @@
         document.getElementById('marshal-button').onclick = marshalContent;
 
         function marshalContent() {
-            var text = document.getElementById('dynamodb-item').value;
-            document.getElementById('content').innerHTML = dynamodbMarshaler.unmarshalJson(JSON.parse(text));
+            var json = document.getElementById('dynamodb-item').value;
+            var marshaledItem = dynamodbMarshaler.marshalJson(json);
+            document.getElementById('content').innerHTML = JSON.stringify(marshaledItem, null, 2);
         }
     };
 </script>
