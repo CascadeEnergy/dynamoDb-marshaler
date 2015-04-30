@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title>Marshaler Example</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <title>Marshaler Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <form>
-            <label for="dynamodb-item">DynamoDb Item</label>
-            <textarea id="dynamodb-item" name="dynamodb-item" class="form-control" rows="10">{"foo": "bar"}</textarea>
-        </form>
-        <button id="marshal-button" class="btn">Click to Transform</button>
-        <pre id="content"></pre>
-    </div>
-</body>
+<div class="container">
+  <form>
+    <label for="dynamodb-item">DynamoDb Item</label>
+    <textarea id="dynamodb-item" name="dynamodb-item" class="form-control" rows="10">{"foo": "bar", "myList": ["bingo", 42, null]}</textarea>
+  </form>
+  <button id="marshal-button" class="btn">Click to Transform</button>
+  <pre id="content"></pre>
+</div>
 <script type="text/javascript" src="../dist/dynamodb-marshaler.js"></script>
 <script type="text/javascript">
-    window.onload = function() {
-        marshalContent();
-        document.getElementById('marshal-button').onclick = marshalContent;
+  window.onload = function() {
+    marshalContent();
+    document.getElementById('marshal-button').onclick = marshalContent;
 
-        function marshalContent() {
-            var json = document.getElementById('dynamodb-item').value;
-            var marshaledItem = dynamodbMarshaler.marshalJson(json);
-            document.getElementById('content').innerHTML = JSON.stringify(marshaledItem, null, 2);
-        }
-    };
+    function marshalContent() {
+      var json = document.getElementById('dynamodb-item').value;
+      var marshaledItem = dynamodbMarshaler.marshalJson(json);
+      document.getElementById('content').innerHTML = JSON.stringify(marshaledItem, null, 2);
+    }
+  };
 </script>
+</body>
 </html>

@@ -10,19 +10,16 @@ Translates sane javascript objects (and JSON) into DynamoDb format and vice vers
 a case where I'm using binary types in json. If you need binary support, please let me know how it might be done, or contribute.
 
 ## Why?
-
 Translation of DynamoDb `AttributeValue` objects is cumbersome and makes working with the [aws-sdk-js](https://github.com/aws/aws-sdk-js)
 more difficult than it needs to be. This library abstracts away the verbose tiresome mappings and lets you work with standard javascript (JSON) data like
 you're used to.
 
 ## Install
-
 ```
 npm install dynamodb-marshaler
 ```
 
 ## Basic Marshaling
-
 ```javascript
 var AWS = require('aws-sdk');
 var marshalItem = require('dynamodb-marshaler').marshalItem;
@@ -37,7 +34,6 @@ dynamoDb.putItem({
 ```
 
 ## Basic Unmarshaling
-
 ```javascript
 var AWS = require('aws-sdk');
 var unmarshalItem = require('dynamodb-marshaler').unmarshalItem;
@@ -54,13 +50,31 @@ var data = dynamoDb.scan({
 });
 ```
 
-## JSON
+## Methods
+**.marshalItem** (alias `.toDDB`)  
+**.unmarshalItem** (alias `.toJS`)  
+**.marshalJson**  
+**.unmarshalJson**  
 
-You can marshal directly from a JSON string. Or unmarshal a DynamoDb api response into a JSON string. Use `marshalJson` and `unmarshalJson`.
+## Browser
+In the `./dist` directory of this repo there is a browser compatible version of this library which can be used as a
+browser global, AMD, or CommonJS/Node module. Check the `examples/example.html` file for basic usage.
+
+## JSON
+You can marshal directly from a JSON string using `marshalJson`. As well as,  unmarshal a DynamoDb api response into a
+JSON string with `unmarshalJson`.
 
 ## Examples
+The examples directory contains a couple of node scripts which use the marshaler. If you clone this repo you can run
+them easily using these commands:
 
-More extensive examples can be found in the [examples](https://github.com/CascadeEnergy/dynamoDb-marshaler/tree/master/examples) directory.
+`node examples/example-marshal.js`  
+`node examples/example-unmarshal.js`  
+
+They showcase all the conversions this library can perform.
+
+The `examples/example.html` showcases use of `dynamodb-marshaler` in the browser environment. It can be run simply by
+opening the example in a web browser. Or you can check it out at this [Plunkr](http://embed.plnkr.co/djI2cuXAqssYZoHO9s5a/preview)
 
 ## Understanding the rules
 
@@ -79,18 +93,6 @@ Here's a table:
 | Empty                 | []                    | {"L": []}                                          |
 | Mixed                 | [42, "foo", null]     | {"L": [{"N": "42"}, {"S": "foo"}, {"NULL": true}]} |
 | Duplicates            | ["foo", "bar", "foo"] | {"L": [{"S": "foo"}, {"S": "bar"}, {"S": "foo"}]}  |
-
-## Methods
-
-**.marshalItem** (alias `.toDDB`)
-**.unmarshalItem** (alias `.toJS`)
-**.marshalJson**
-**.unmarshalJson**
-
-## Browser
-
-In the `./dist` directory of this repo there is a browser compatible version of this library which can be used as a
-browser global, AMD, or CommonJS/Node module. Check the `examples/example.html` file for a very simple use of it.
 
 ## Contributions
 
