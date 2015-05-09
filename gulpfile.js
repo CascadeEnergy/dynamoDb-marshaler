@@ -32,7 +32,7 @@ createLintTask('lint-test', ['test/**/*.js']);
 
 gulp.task('build-node', ['lint-src'], function() {
   return gulp.src('src/**/*.js')
-    .pipe(plugins.babel())
+    .pipe(plugins.babel({optional: 'runtime'}))
     .pipe(gulp.dest(''));
 });
 
@@ -40,7 +40,7 @@ gulp.task('build-browser', ['lint-src'], function() {
   var b = browserify('./src/dynamodb-marshaler.js', {standalone: 'dynamodb-marshaler'});
   var bstream;
 
-  b.transform(babelify);
+  b.transform(babelify.configure({optional: ['runtime']}));
   bstream = b.bundle();
   return bstream
     .on('error', function(err){

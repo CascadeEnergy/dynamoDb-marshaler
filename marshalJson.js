@@ -1,16 +1,16 @@
 'use strict';
 
-var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
 
-Object.defineProperty(exports, '__esModule', {
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
   value: true
 });
 
 var _marshalItem = require('./marshalItem');
 
 var _marshalItem2 = _interopRequireDefault(_marshalItem);
-
-require('babel/polyfill');
 
 /**
  * Translates a JSON string into an object in DynamoDb format.

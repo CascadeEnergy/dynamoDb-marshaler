@@ -1,4 +1,3 @@
-require('babel/polyfill');
 import unmarshalItem from './unmarshalItem';
 
 /**

@@ -1,4 +1,3 @@
-require('babel/polyfill');
 import ensureItemIsObject from './lib/ensureItemIsObject';
 import {toJS} from './lib/converter';
 

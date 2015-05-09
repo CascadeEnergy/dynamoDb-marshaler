@@ -3,3 +3,4 @@ examples
 dist
 src
 .travis.yml
+.jshintrc

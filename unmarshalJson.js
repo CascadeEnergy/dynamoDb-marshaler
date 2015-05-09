@@ -1,16 +1,16 @@
 'use strict';
 
-var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
 
-Object.defineProperty(exports, '__esModule', {
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
   value: true
 });
 
 var _unmarshalItem = require('./unmarshalItem');
 
 var _unmarshalItem2 = _interopRequireDefault(_unmarshalItem);
-
-require('babel/polyfill');
 
 /**
  * Translates a DynamoDb formatted object, into a normally formatted object

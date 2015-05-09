@@ -1,4 +1,3 @@
-require('babel/polyfill');
 import marshalItem from './marshalItem';
 import marshalJson from './marshalJson';
 import unmarshalItem from './unmarshalItem';
