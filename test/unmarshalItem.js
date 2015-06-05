@@ -41,7 +41,7 @@ describe('unmarshalItem', () => {
     ],
     'dynamo "NS" to Set of numbers': [
       {test: {NS: ['42', '17', '25']}},
-      {test: numberSet}
+      {test: [42, 17, 25]}
     ],
     'dynamo "S" to string': [
       {test: {S: 'foo'}},
@@ -49,7 +49,7 @@ describe('unmarshalItem', () => {
     ],
     'dynamo "SS" to Set of strings': [
       {test: {SS: ['foo', 'bar', 'baz']}},
-      {test: stringSet}
+      {test: ['foo', 'bar', 'baz']}
     ]
   }, (item, expected) => {
     it('should convert successfully', () => {

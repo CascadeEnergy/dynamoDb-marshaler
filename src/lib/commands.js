@@ -258,7 +258,7 @@ export function unmarshalNumberSet(item) {
     return undefined;
   }
 
-  return new Set(_.map(item.NS, parseFloat));
+  return _.map(item.NS, parseFloat);
 }
 
 /**
@@ -272,7 +272,7 @@ export function unmarshalStringSet(item) {
     return undefined;
   }
 
-  return new Set(item.SS);
+  return item.SS;
 }
 
 /**
