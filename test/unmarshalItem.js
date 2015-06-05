@@ -4,16 +4,6 @@ import {withData} from 'leche';
 import unmarshalItem from '../src/unmarshalItem';
 
 describe('unmarshalItem', () => {
-  let numberSet = new Set();
-  numberSet.add(42);
-  numberSet.add(17);
-  numberSet.add(25);
-
-  let stringSet = new Set();
-  stringSet.add('foo');
-  stringSet.add('bar');
-  stringSet.add('baz');
-
   withData({
     'dynamo "BOOL" to false': [
       {test: {BOOL: false}},
