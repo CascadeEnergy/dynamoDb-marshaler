@@ -13347,7 +13347,7 @@ function unmarshalNumberSet(item) {
     return undefined;
   }
 
-  return new _Set(_import2['default'].map(item.NS, parseFloat));
+  return _import2['default'].map(item.NS, parseFloat);
 }
 
 function unmarshalStringSet(item) {
@@ -13355,7 +13355,7 @@ function unmarshalStringSet(item) {
     return undefined;
   }
 
-  return new _Set(item.SS);
+  return item.SS;
 }
 
 function unmarshalPassThrough(item) {

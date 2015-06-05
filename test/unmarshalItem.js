@@ -4,16 +4,6 @@ import {withData} from 'leche';
 import unmarshalItem from '../src/unmarshalItem';
 
 describe('unmarshalItem', () => {
-  let numberSet = new Set();
-  numberSet.add(42);
-  numberSet.add(17);
-  numberSet.add(25);
-
-  let stringSet = new Set();
-  stringSet.add('foo');
-  stringSet.add('bar');
-  stringSet.add('baz');
-
   withData({
     'dynamo "BOOL" to false': [
       {test: {BOOL: false}},
@@ -41,7 +31,7 @@ describe('unmarshalItem', () => {
     ],
     'dynamo "NS" to Set of numbers': [
       {test: {NS: ['42', '17', '25']}},
-      {test: numberSet}
+      {test: [42, 17, 25]}
     ],
     'dynamo "S" to string': [
       {test: {S: 'foo'}},
@@ -49,7 +39,7 @@ describe('unmarshalItem', () => {
     ],
     'dynamo "SS" to Set of strings': [
       {test: {SS: ['foo', 'bar', 'baz']}},
-      {test: stringSet}
+      {test: ['foo', 'bar', 'baz']}
     ]
   }, (item, expected) => {
     it('should convert successfully', () => {
