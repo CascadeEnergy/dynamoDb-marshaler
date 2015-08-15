@@ -12,7 +12,9 @@ var _ensureItemIsObject = require('./lib/ensureItemIsObject');
 
 var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
 
-var _toDDB = require('./lib/converter');
+var _marshal = require('./marshal');
+
+var _marshal2 = _interopRequireDefault(_marshal);
 
 /**
  * Translates a javascript object into a format ready for DynamoDb.
@@ -21,8 +23,7 @@ var _toDDB = require('./lib/converter');
  * @returns {Object} The marshaled dynamoDb item.
  */
 function marshalItem(item) {
-  var marshaledItem = _toDDB.toDDB(item);
-  return marshaledItem.M;
+  return _marshal2['default'](item).M;
 }
 
 exports['default'] = _ensureItemIsObject2['default'](marshalItem);

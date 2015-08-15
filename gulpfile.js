@@ -20,24 +20,24 @@ function createLintTask(taskName, files) {
 }
 
 function test() {
-  return gulp.src(['test/**/*.js'])
+  return gulp.src(['es6/test/**/*.js'])
     .pipe(plugins.mocha());
 }
 
 // Lint our source code
-createLintTask('lint-src', ['src/**/*.js']);
+createLintTask('lint-es6', ['es6/**/*.js']);
 
 // Lint our test code
-createLintTask('lint-test', ['test/**/*.js']);
+createLintTask('lint-test', ['es6/test/**/*.js']);
 
-gulp.task('build-node', ['lint-src'], function() {
-  return gulp.src('src/**/*.js')
+gulp.task('build-node', ['lint-es6'], function() {
+  return gulp.src('es6/**/*.js')
     .pipe(plugins.babel({optional: 'runtime'}))
     .pipe(gulp.dest(''));
 });
 
-gulp.task('build-browser', ['lint-src'], function() {
-  var b = browserify('./src/dynamodb-marshaler.js', {standalone: 'dynamodb-marshaler'});
+gulp.task('build-browser', ['lint-es6'], function() {
+  var b = browserify('./es6/dynamodb-marshaler.js', {standalone: 'dynamodb-marshaler'});
   var bstream;
 
   b.transform(babelify.configure({optional: ['runtime']}));
@@ -57,9 +57,9 @@ gulp.task('build-browser', ['lint-src'], function() {
 
 gulp.task('build', ['build-node', 'build-browser']);
 
-gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
+gulp.task('coverage', ['lint-es6', 'lint-test'], function(done) {
   require('babel/register')({ modules: 'common' });
-  gulp.src(['src/**/*.js'])
+  gulp.src(['es6/**/*.js', '!es6/test/**'])
     .pipe(plugins.istanbul({ instrumenter: isparta.Instrumenter }))
     .pipe(plugins.istanbul.hookRequire())
     .on('finish', function() {
@@ -70,13 +70,13 @@ gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
 });
 
 // Lint and run our tests
-gulp.task('test', ['lint-src', 'lint-test'], function() {
+gulp.task('test', ['lint-es6', 'lint-test'], function() {
   require('babel/register')({ modules: 'common' });
   return test();
 });
 
 gulp.task('watch', function() {
-  var watchFiles = ['src/**/*', 'test/**/*', 'package.json', '**/.jshintrc'];
+  var watchFiles = ['es6/**/*', 'es6/test/**/*', 'package.json', '**/.jshintrc'];
   gulp.watch(watchFiles, ['test']);
 });
 

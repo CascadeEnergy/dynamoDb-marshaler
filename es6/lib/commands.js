@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 // Marshal command chain
-export var marshalCommandList = [
+export const marshalCommandList = [
   marshalString,
   marshalNumber,
   marshalBoolean,
@@ -13,7 +13,7 @@ export var marshalCommandList = [
 ];
 
 // Unmarshal command chain
-export var unmarshalCommandList = [
+export const unmarshalCommandList = [
   unmarshalPassThrough,
   unmarshalNumber,
   unmarshalStringSet,
@@ -33,6 +33,7 @@ export function marshalBoolean(item) {
   if (!_.isBoolean(item)) {
     return undefined;
   }
+
   return {BOOL: item};
 }
 
@@ -48,8 +49,7 @@ export function marshalList(item, marshal) {
     return undefined;
   }
 
-  item = _.map(item, marshal);
-  return {L: item};
+  return {L: _.map(item, marshal)};
 }
 
 /**
@@ -65,12 +65,7 @@ export function marshalMap(item, marshal) {
     return undefined;
   }
 
-  item = _.reduce(item, function(result, value, key) {
-    result[key] = marshal(value);
-    return result;
-  }, {});
-
-  return {M: item};
+  return {M: _.mapValues(item, value => marshal(value))};
 }
 
 /**
@@ -83,6 +78,7 @@ export function marshalNull(item) {
   if (!_.isNull(item) && !_.isUndefined(item)) {
     return undefined;
   }
+
   return {NULL: true};
 }
 
@@ -96,6 +92,7 @@ export function marshalNumber(item) {
   if (!_.isNumber(item)) {
     return undefined;
   }
+
   return {N: item.toString()};
 }
 
@@ -114,11 +111,7 @@ function marshalArrayToNumberSet(arr) {
     return undefined;
   }
 
-  arr = _.map(arr, function stringify(num) {
-    return num.toString();
-  });
-
-  return { NS: arr };
+  return {NS: _.map(arr, num => num.toString())};
 }
 
 /**
@@ -149,6 +142,7 @@ export function marshalString(item) {
   if (!_.isString(item) || _.isEmpty(item)) {
     return undefined;
   }
+
   return {S: item};
 }
 
@@ -282,11 +276,7 @@ export function unmarshalStringSet(item) {
  * @returns {*}
  */
 export function unmarshalPassThrough(item) {
-  let typeList = ['S', 'B', 'BS', 'BOOL'];
-
-  var key = _.find(typeList, function(type) {
-    return _.has(item, type);
-  });
+  const key = _.find(['S', 'B', 'BS', 'BOOL'], type => _.has(item, type));
 
   if (!key) {
     return undefined;

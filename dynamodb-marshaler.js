@@ -24,7 +24,17 @@ var _unmarshalJson = require('./unmarshalJson');
 
 var _unmarshalJson2 = _interopRequireDefault(_unmarshalJson);
 
+var _marshal = require('./marshal');
+
+var _marshal2 = _interopRequireDefault(_marshal);
+
+var _unmarshal = require('./unmarshal');
+
+var _unmarshal2 = _interopRequireDefault(_unmarshal);
+
 var marshaler = {
+  marshal: _marshal2['default'],
+  unmarshal: _unmarshal2['default'],
   marshalItem: _marshalItem2['default'],
   marshalJson: _marshalJson2['default'],
   toDDB: _marshalItem2['default'],

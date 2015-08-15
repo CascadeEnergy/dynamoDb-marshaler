@@ -12,7 +12,9 @@ var _ensureItemIsObject = require('./lib/ensureItemIsObject');
 
 var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
 
-var _toJS = require('./lib/converter');
+var _unmarshal = require('./unmarshal');
+
+var _unmarshal2 = _interopRequireDefault(_unmarshal);
 
 /**
  * Translates a DynamoDb formatted object (a response from DynamoDb sdk) into
@@ -22,7 +24,7 @@ var _toJS = require('./lib/converter');
  * @returns {Object} A javascript object in normal form.
  */
 function unmarshalItem(item) {
-  return _toJS.toJS({ M: item });
+  return _unmarshal2['default']({ M: item });
 }
 
 exports['default'] = _ensureItemIsObject2['default'](unmarshalItem);

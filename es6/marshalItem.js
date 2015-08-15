@@ -1,5 +1,5 @@
 import ensureItemIsObject from './lib/ensureItemIsObject';
-import {toDDB} from './lib/converter';
+import marshal from './marshal';
 
 /**
  * Translates a javascript object into a format ready for DynamoDb.
@@ -8,8 +8,7 @@ import {toDDB} from './lib/converter';
  * @returns {Object} The marshaled dynamoDb item.
  */
 function marshalItem(item) {
-  var marshaledItem = toDDB(item);
-  return marshaledItem.M;
+  return marshal(item).M;
 }
 
 export default ensureItemIsObject(marshalItem);

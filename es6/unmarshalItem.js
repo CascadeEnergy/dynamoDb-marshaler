@@ -1,5 +1,5 @@
 import ensureItemIsObject from './lib/ensureItemIsObject';
-import {toJS} from './lib/converter';
+import unmarshal from './unmarshal';
 
 /**
  * Translates a DynamoDb formatted object (a response from DynamoDb sdk) into
@@ -9,7 +9,7 @@ import {toJS} from './lib/converter';
  * @returns {Object} A javascript object in normal form.
  */
 function unmarshalItem(item) {
-  return toJS({M: item});
+  return unmarshal({M: item});
 }
 
 export default ensureItemIsObject(unmarshalItem);

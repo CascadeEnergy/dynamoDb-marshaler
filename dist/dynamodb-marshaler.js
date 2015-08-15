@@ -25,7 +25,17 @@ var _unmarshalJson = require('./unmarshalJson');
 
 var _unmarshalJson2 = _interopRequireDefault(_unmarshalJson);
 
+var _marshal = require('./marshal');
+
+var _marshal2 = _interopRequireDefault(_marshal);
+
+var _unmarshal = require('./unmarshal');
+
+var _unmarshal2 = _interopRequireDefault(_unmarshal);
+
 var marshaler = {
+  marshal: _marshal2['default'],
+  unmarshal: _unmarshal2['default'],
   marshalItem: _marshalItem2['default'],
   marshalJson: _marshalJson2['default'],
   toDDB: _marshalItem2['default'],
@@ -37,17 +47,598 @@ var marshaler = {
 exports['default'] = marshaler;
 module.exports = exports['default'];
 
-},{"./marshalItem":47,"./marshalJson":48,"./unmarshalItem":49,"./unmarshalJson":50,"babel-runtime/core-js/object/define-property":5,"babel-runtime/helpers/interop-require-default":7}],2:[function(require,module,exports){
+},{"./marshal":5,"./marshalItem":6,"./marshalJson":7,"./unmarshal":8,"./unmarshalItem":9,"./unmarshalJson":10,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],2:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _Set = require('babel-runtime/core-js/set')['default'];
+
+var _Array$from = require('babel-runtime/core-js/array/from')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+/**
+ * Converts boolean value to DynamoDb "BOOL"
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.marshalBoolean = marshalBoolean;
+
+/**
+ * Converts mixed array to DynamoDb "L"
+ *
+ * @param item
+ * @param marshal
+ * @returns {*}
+ */
+exports.marshalList = marshalList;
+
+/**
+ * Converts object literal to DynamoDb "M"
+ *
+ * @param item
+ * @param marshal
+ * @returns {*}
+ */
+exports.marshalMap = marshalMap;
+
+/**
+ * Converts null to DynamoDb "NULL"
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.marshalNull = marshalNull;
+
+/**
+ * Converts number to DynamoDb "N"
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.marshalNumber = marshalNumber;
+
+/**
+ * Converts Arrays and Sets to DynamoDb "NS"
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.marshalNumberSet = marshalNumberSet;
+
+/**
+ * Converts strings to DynamoDb "S"
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.marshalString = marshalString;
+
+/**
+ * Converts Arrays and Sets to DynamoDb "SS"
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.marshalStringSet = marshalStringSet;
+
+/**
+ * Converts DynamoDb "L" to mixed array
+ *
+ * @param item
+ * @param unmarshal
+ * @returns {*}
+ */
+exports.unmarshalList = unmarshalList;
+
+/**
+ * Converts DynamoDb "M" to object literal
+ *
+ * @param item
+ * @param unmarshal
+ * @returns {*}
+ */
+exports.unmarshalMap = unmarshalMap;
+
+/**
+ * Converts DynamoDb "NULL" to null
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.unmarshalNull = unmarshalNull;
+
+/**
+ * Converts DynamoDb "N" to Number
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.unmarshalNumber = unmarshalNumber;
+
+/**
+ * Converts DynamoDb "NS" to Set of Numbers
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.unmarshalNumberSet = unmarshalNumberSet;
+
+/**
+ * Converts DynamoDb "SS" to Set of Strings
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.unmarshalStringSet = unmarshalStringSet;
+
+/**
+ * Converts DynamoDb "S", "B", "BS", "BOOL" to values.
+ *
+ * @param item
+ * @returns {*}
+ */
+exports.unmarshalPassThrough = unmarshalPassThrough;
+
+var _import = require('lodash');
+
+var _import2 = _interopRequireDefault(_import);
+
+// Marshal command chain
+var marshalCommandList = [marshalString, marshalNumber, marshalBoolean, marshalNull, marshalStringSet, marshalNumberSet, marshalList, marshalMap];
+
+exports.marshalCommandList = marshalCommandList;
+// Unmarshal command chain
+var unmarshalCommandList = [unmarshalPassThrough, unmarshalNumber, unmarshalStringSet, unmarshalNumberSet, unmarshalNull, unmarshalMap, unmarshalList];exports.unmarshalCommandList = unmarshalCommandList;
+
+function marshalBoolean(item) {
+  if (!_import2['default'].isBoolean(item)) {
+    return undefined;
+  }
+
+  return { BOOL: item };
+}
+
+function marshalList(item, marshal) {
+  if (!_import2['default'].isArray(item)) {
+    return undefined;
+  }
+
+  return { L: _import2['default'].map(item, marshal) };
+}
+
+function marshalMap(item, marshal) {
+  // Todo make this accept ES6 Map or Object Literal
+  if (!_import2['default'].isPlainObject(item)) {
+    return undefined;
+  }
+
+  return { M: _import2['default'].mapValues(item, function (value) {
+      return marshal(value);
+    }) };
+}
+
+function marshalNull(item) {
+  if (!_import2['default'].isNull(item) && !_import2['default'].isUndefined(item)) {
+    return undefined;
+  }
+
+  return { NULL: true };
+}
+
+function marshalNumber(item) {
+  if (!_import2['default'].isNumber(item)) {
+    return undefined;
+  }
+
+  return { N: item.toString() };
+}
+
+/**
+ * Helper function for arrays to DynamoDb "NS"
+ *
+ * @param arr
+ * @returns {*}
+ */
+function marshalArrayToNumberSet(arr) {
+  if (_import2['default'].isEmpty(arr) || !_import2['default'].every(arr, _import2['default'].isNumber) || _import2['default'].uniq(arr).length !== arr.length) {
+    return undefined;
+  }
+
+  return { NS: _import2['default'].map(arr, function (num) {
+      return num.toString();
+    }) };
+}
+function marshalNumberSet(item) {
+  if (_import2['default'].isArray(item)) {
+    return marshalArrayToNumberSet(item);
+  }
+
+  if (item instanceof _Set) {
+    return marshalArrayToNumberSet(_Array$from(item));
+  }
+
+  return undefined;
+}
+
+function marshalString(item) {
+  if (!_import2['default'].isString(item) || _import2['default'].isEmpty(item)) {
+    return undefined;
+  }
+
+  return { S: item };
+}
+
+/**
+ * Helper function for arrays to DynamoDb "SS"
+ *
+ * @param arr
+ * @returns {*}
+ */
+function marshalArrayToStringSet(arr) {
+  if (_import2['default'].isEmpty(arr) || !_import2['default'].every(arr, _import2['default'].isString) || _import2['default'].uniq(arr).length !== arr.length) {
+    return undefined;
+  }
+
+  return { SS: arr };
+}
+function marshalStringSet(item) {
+  if (_import2['default'].isArray(item)) {
+    return marshalArrayToStringSet(item);
+  }
+
+  if (item instanceof _Set) {
+    return marshalArrayToStringSet(_Array$from(item));
+  }
+
+  return undefined;
+}
+
+function unmarshalList(item, unmarshal) {
+  if (!_import2['default'].has(item, 'L')) {
+    return undefined;
+  }
+
+  return _import2['default'].map(item.L, unmarshal);
+}
+
+function unmarshalMap(item, unmarshal) {
+  // Todo Make this convert to ES6 Map instead of object literal
+  if (!_import2['default'].has(item, 'M')) {
+    return undefined;
+  }
+
+  return _import2['default'].mapValues(item.M, unmarshal);
+}
+
+function unmarshalNull(item) {
+  if (!_import2['default'].has(item, 'NULL')) {
+    return undefined;
+  }
+
+  return null;
+}
+
+function unmarshalNumber(item) {
+  if (!_import2['default'].has(item, 'N')) {
+    return undefined;
+  }
+
+  return parseFloat(item.N);
+}
+
+function unmarshalNumberSet(item) {
+  if (!_import2['default'].has(item, 'NS')) {
+    return undefined;
+  }
+
+  return _import2['default'].map(item.NS, parseFloat);
+}
+
+function unmarshalStringSet(item) {
+  if (!_import2['default'].has(item, 'SS')) {
+    return undefined;
+  }
+
+  return item.SS;
+}
+
+function unmarshalPassThrough(item) {
+  var key = _import2['default'].find(['S', 'B', 'BS', 'BOOL'], function (type) {
+    return _import2['default'].has(item, type);
+  });
+
+  if (!key) {
+    return undefined;
+  }
+
+  return item[key];
+}
+
+},{"babel-runtime/core-js/array/from":11,"babel-runtime/core-js/object/define-property":13,"babel-runtime/core-js/set":14,"babel-runtime/helpers/interop-require-default":15,"lodash":48}],3:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _getIterator = require('babel-runtime/core-js/get-iterator')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _isUndefined = require('lodash/lang/isUndefined');
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+/**
+ * Recursive dispatcher, returns a function which iterates a series of commands
+ * looking for one to handle the target and return a value. If the target
+ * cannot be handled by a command the command returns undefined. If none of the
+ * supplied commands handle the target, an error is thrown.
+ *
+ * @param commands
+ * @returns {Function}
+ */
+function dispatcher() {
+  for (var _len = arguments.length, commands = Array(_len), _key = 0; _key < _len; _key++) {
+    commands[_key] = arguments[_key];
+  }
+
+  return function dispatch(target) {
+    var result = undefined;
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = _getIterator(commands), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var command = _step.value;
+
+        result = command(target, dispatch);
+
+        if (!_isUndefined2['default'](result)) {
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator['return']) {
+          _iterator['return']();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    if (_isUndefined2['default'](result)) {
+      throw new TypeError('Encountered unexpected target');
+    }
+
+    return result;
+  };
+}
+
+exports['default'] = dispatcher;
+module.exports = exports['default'];
+
+},{"babel-runtime/core-js/get-iterator":12,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15,"lodash/lang/isUndefined":49}],4:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _isPlainObject = require('lodash');
+
+/**
+ * Function decorator, validates item is a javascript object.
+ *
+ * @param {Function} fn Underlying function to call.
+ * @returns {Function}
+ */
+function ensureItemIsObject(fn) {
+  return function (item) {
+    if (_isPlainObject.isPlainObject(item)) {
+      return fn(item);
+    }
+    throw new TypeError('Item must be plain object literal');
+  };
+}
+
+exports['default'] = ensureItemIsObject;
+module.exports = exports['default'];
+
+},{"babel-runtime/core-js/object/define-property":13,"lodash":48}],5:[function(require,module,exports){
+'use strict';
+
+var _toConsumableArray = require('babel-runtime/helpers/to-consumable-array')['default'];
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _dispatcher = require('./lib/dispatcher');
+
+var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+var _marshalCommandList = require('./lib/commands');
+
+exports['default'] = _dispatcher2['default'].apply(undefined, _toConsumableArray(_marshalCommandList.marshalCommandList));
+module.exports = exports['default'];
+
+},{"./lib/commands":2,"./lib/dispatcher":3,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15,"babel-runtime/helpers/to-consumable-array":16}],6:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _ensureItemIsObject = require('./lib/ensureItemIsObject');
+
+var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
+
+var _marshal = require('./marshal');
+
+var _marshal2 = _interopRequireDefault(_marshal);
+
+/**
+ * Translates a javascript object into a format ready for DynamoDb.
+ *
+ * @param {Object} item Plain javascript object.
+ * @returns {Object} The marshaled dynamoDb item.
+ */
+function marshalItem(item) {
+  return _marshal2['default'](item).M;
+}
+
+exports['default'] = _ensureItemIsObject2['default'](marshalItem);
+module.exports = exports['default'];
+
+},{"./lib/ensureItemIsObject":4,"./marshal":5,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],7:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _marshalItem = require('./marshalItem');
+
+var _marshalItem2 = _interopRequireDefault(_marshalItem);
+
+/**
+ * Translates a JSON string into an object in DynamoDb format.
+ *
+ * @param {String} json A JSON representation of a javascript object.
+ * @returns {Object} The marshaled DynamoDb compliant item.
+ */
+function marshalJson(json) {
+  return _marshalItem2['default'](JSON.parse(json));
+}
+
+exports['default'] = marshalJson;
+module.exports = exports['default'];
+
+},{"./marshalItem":6,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],8:[function(require,module,exports){
+'use strict';
+
+var _toConsumableArray = require('babel-runtime/helpers/to-consumable-array')['default'];
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _dispatcher = require('./lib/dispatcher');
+
+var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+var _unmarshalCommandList = require('./lib/commands');
+
+exports['default'] = _dispatcher2['default'].apply(undefined, _toConsumableArray(_unmarshalCommandList.unmarshalCommandList));
+module.exports = exports['default'];
+
+},{"./lib/commands":2,"./lib/dispatcher":3,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15,"babel-runtime/helpers/to-consumable-array":16}],9:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _ensureItemIsObject = require('./lib/ensureItemIsObject');
+
+var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
+
+var _unmarshal = require('./unmarshal');
+
+var _unmarshal2 = _interopRequireDefault(_unmarshal);
+
+/**
+ * Translates a DynamoDb formatted object (a response from DynamoDb sdk) into
+ * a plain javascript object with DynamoDb AttributeValue objects.
+ *
+ * @param {Object} item DynamoDb formatted object.
+ * @returns {Object} A javascript object in normal form.
+ */
+function unmarshalItem(item) {
+  return _unmarshal2['default']({ M: item });
+}
+
+exports['default'] = _ensureItemIsObject2['default'](unmarshalItem);
+module.exports = exports['default'];
+
+},{"./lib/ensureItemIsObject":4,"./unmarshal":8,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],10:[function(require,module,exports){
+'use strict';
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _unmarshalItem = require('./unmarshalItem');
+
+var _unmarshalItem2 = _interopRequireDefault(_unmarshalItem);
+
+/**
+ * Translates a DynamoDb formatted object, into a normally formatted object
+ * represented as a JSON string.
+ *
+ * @param {Object} item DynamoDb formatted object.
+ * @returns {String} JSON representation of a javascript object.
+ */
+function unmarshalJson(item) {
+  return JSON.stringify(_unmarshalItem2['default'](item));
+}
+
+exports['default'] = unmarshalJson;
+module.exports = exports['default'];
+
+},{"./unmarshalItem":9,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],11:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
-},{"core-js/library/fn/array/from":8}],3:[function(require,module,exports){
+},{"core-js/library/fn/array/from":17}],12:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
-},{"core-js/library/fn/get-iterator":9}],4:[function(require,module,exports){
-module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
-},{"core-js/library/fn/object/assign":10}],5:[function(require,module,exports){
+},{"core-js/library/fn/get-iterator":18}],13:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":11}],6:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":19}],14:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/set"), __esModule: true };
-},{"core-js/library/fn/set":12}],7:[function(require,module,exports){
+},{"core-js/library/fn/set":20}],15:[function(require,module,exports){
 "use strict";
 
 exports["default"] = function (obj) {
@@ -57,31 +648,44 @@ exports["default"] = function (obj) {
 };
 
 exports.__esModule = true;
-},{}],8:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
+"use strict";
+
+var _Array$from = require("babel-runtime/core-js/array/from")["default"];
+
+exports["default"] = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return _Array$from(arr);
+  }
+};
+
+exports.__esModule = true;
+},{"babel-runtime/core-js/array/from":11}],17:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/es6.array.from');
 module.exports = require('../../modules/$').core.Array.from;
-},{"../../modules/$":28,"../../modules/es6.array.from":35,"../../modules/es6.string.iterator":40}],9:[function(require,module,exports){
+},{"../../modules/$":34,"../../modules/es6.array.from":41,"../../modules/es6.string.iterator":45}],18:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 require('../modules/core.iter-helpers');
 module.exports = require('../modules/$').core.getIterator;
-},{"../modules/$":28,"../modules/core.iter-helpers":34,"../modules/es6.string.iterator":40,"../modules/web.dom.iterable":42}],10:[function(require,module,exports){
-require('../../modules/es6.object.assign');
-module.exports = require('../../modules/$').core.Object.assign;
-},{"../../modules/$":28,"../../modules/es6.object.assign":37}],11:[function(require,module,exports){
+},{"../modules/$":34,"../modules/core.iter-helpers":40,"../modules/es6.string.iterator":45,"../modules/web.dom.iterable":47}],19:[function(require,module,exports){
 var $ = require('../../modules/$');
 module.exports = function defineProperty(it, key, desc){
   return $.setDesc(it, key, desc);
 };
-},{"../../modules/$":28}],12:[function(require,module,exports){
+},{"../../modules/$":34}],20:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
 require('../modules/es6.set');
 require('../modules/es7.set.to-json');
 module.exports = require('../modules/$').core.Set;
-},{"../modules/$":28,"../modules/es6.object.to-string":38,"../modules/es6.set":39,"../modules/es6.string.iterator":40,"../modules/es7.set.to-json":41,"../modules/web.dom.iterable":42}],13:[function(require,module,exports){
+},{"../modules/$":34,"../modules/es6.object.to-string":43,"../modules/es6.set":44,"../modules/es6.string.iterator":45,"../modules/es7.set.to-json":46,"../modules/web.dom.iterable":47}],21:[function(require,module,exports){
 var $ = require('./$');
 function assert(condition, msg1, msg2){
   if(!condition)throw TypeError(msg2 ? msg1 + msg2 : msg1);
@@ -100,27 +704,7 @@ assert.inst = function(it, Constructor, name){
   return it;
 };
 module.exports = assert;
-},{"./$":28}],14:[function(require,module,exports){
-var $        = require('./$')
-  , enumKeys = require('./$.enum-keys');
-// 19.1.2.1 Object.assign(target, source, ...)
-/* eslint-disable no-unused-vars */
-module.exports = Object.assign || function assign(target, source){
-/* eslint-enable no-unused-vars */
-  var T = Object($.assertDefined(target))
-    , l = arguments.length
-    , i = 1;
-  while(l > i){
-    var S      = $.ES5Object(arguments[i++])
-      , keys   = enumKeys(S)
-      , length = keys.length
-      , j      = 0
-      , key;
-    while(length > j)T[key = keys[j++]] = S[key];
-  }
-  return T;
-};
-},{"./$":28,"./$.enum-keys":21}],15:[function(require,module,exports){
+},{"./$":34}],22:[function(require,module,exports){
 var $        = require('./$')
   , TAG      = require('./$.wks')('toStringTag')
   , toString = {}.toString;
@@ -136,7 +720,7 @@ cof.set = function(it, tag, stat){
   if(it && !$.has(it = stat ? it : it.prototype, TAG))$.hide(it, TAG, tag);
 };
 module.exports = cof;
-},{"./$":28,"./$.wks":33}],16:[function(require,module,exports){
+},{"./$":34,"./$.wks":39}],23:[function(require,module,exports){
 'use strict';
 var $        = require('./$')
   , ctx      = require('./$.ctx')
@@ -293,7 +877,7 @@ module.exports = {
     }, IS_MAP ? 'entries' : 'values' , !IS_MAP, true);
   }
 };
-},{"./$":28,"./$.assert":13,"./$.ctx":19,"./$.for-of":22,"./$.iter":27,"./$.iter-define":25,"./$.uid":31}],17:[function(require,module,exports){
+},{"./$":34,"./$.assert":21,"./$.ctx":26,"./$.for-of":28,"./$.iter":33,"./$.iter-define":31,"./$.uid":37}],24:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $def  = require('./$.def')
   , forOf = require('./$.for-of');
@@ -306,7 +890,7 @@ module.exports = function(NAME){
     }
   });
 };
-},{"./$.def":20,"./$.for-of":22}],18:[function(require,module,exports){
+},{"./$.def":27,"./$.for-of":28}],25:[function(require,module,exports){
 'use strict';
 var $     = require('./$')
   , $def  = require('./$.def')
@@ -372,7 +956,7 @@ module.exports = function(NAME, methods, common, IS_MAP, IS_WEAK){
 
   return C;
 };
-},{"./$":28,"./$.assert":13,"./$.cof":15,"./$.def":20,"./$.for-of":22,"./$.iter":27,"./$.iter-detect":26,"./$.species":29}],19:[function(require,module,exports){
+},{"./$":34,"./$.assert":21,"./$.cof":22,"./$.def":27,"./$.for-of":28,"./$.iter":33,"./$.iter-detect":32,"./$.species":35}],26:[function(require,module,exports){
 // Optional / simple context binding
 var assertFunction = require('./$.assert').fn;
 module.exports = function(fn, that, length){
@@ -392,7 +976,7 @@ module.exports = function(fn, that, length){
       return fn.apply(that, arguments);
     };
 };
-},{"./$.assert":13}],20:[function(require,module,exports){
+},{"./$.assert":21}],27:[function(require,module,exports){
 var $          = require('./$')
   , global     = $.g
   , core       = $.core
@@ -439,18 +1023,7 @@ function $def(type, name, source){
   }
 }
 module.exports = $def;
-},{"./$":28}],21:[function(require,module,exports){
-var $ = require('./$');
-module.exports = function(it){
-  var keys       = $.getKeys(it)
-    , getDesc    = $.getDesc
-    , getSymbols = $.getSymbols;
-  if(getSymbols)$.each.call(getSymbols(it), function(key){
-    if(getDesc(it, key).enumerable)keys.push(key);
-  });
-  return keys;
-};
-},{"./$":28}],22:[function(require,module,exports){
+},{"./$":34}],28:[function(require,module,exports){
 var ctx  = require('./$.ctx')
   , get  = require('./$.iter').get
   , call = require('./$.iter-call');
@@ -464,13 +1037,13 @@ module.exports = function(iterable, entries, fn, that){
     }
   }
 };
-},{"./$.ctx":19,"./$.iter":27,"./$.iter-call":24}],23:[function(require,module,exports){
+},{"./$.ctx":26,"./$.iter":33,"./$.iter-call":30}],29:[function(require,module,exports){
 module.exports = function($){
   $.FW   = false;
   $.path = $.core;
   return $;
 };
-},{}],24:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var assertObject = require('./$.assert').obj;
 function close(iterator){
   var ret = iterator['return'];
@@ -486,7 +1059,7 @@ function call(iterator, fn, value, entries){
 }
 call.close = close;
 module.exports = call;
-},{"./$.assert":13}],25:[function(require,module,exports){
+},{"./$.assert":21}],31:[function(require,module,exports){
 var $def            = require('./$.def')
   , $               = require('./$')
   , cof             = require('./$.cof')
@@ -536,7 +1109,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE)
     } else $def($def.P + $def.F * $iter.BUGGY, NAME, methods);
   }
 };
-},{"./$":28,"./$.cof":15,"./$.def":20,"./$.iter":27,"./$.wks":33}],26:[function(require,module,exports){
+},{"./$":34,"./$.cof":22,"./$.def":27,"./$.iter":33,"./$.wks":39}],32:[function(require,module,exports){
 var SYMBOL_ITERATOR = require('./$.wks')('iterator')
   , SAFE_CLOSING    = false;
 try {
@@ -556,7 +1129,7 @@ module.exports = function(exec){
   } catch(e){ /* empty */ }
   return safe;
 };
-},{"./$.wks":33}],27:[function(require,module,exports){
+},{"./$.wks":39}],33:[function(require,module,exports){
 'use strict';
 var $                 = require('./$')
   , cof               = require('./$.cof')
@@ -598,7 +1171,7 @@ module.exports = {
     cof.set(Constructor, NAME + ' Iterator');
   }
 };
-},{"./$":28,"./$.assert":13,"./$.cof":15,"./$.wks":33}],28:[function(require,module,exports){
+},{"./$":34,"./$.assert":21,"./$.cof":22,"./$.wks":39}],34:[function(require,module,exports){
 'use strict';
 var global = typeof self != 'undefined' ? self : Function('return this')()
   , core   = {}
@@ -702,7 +1275,7 @@ var $ = module.exports = require('./$.fw')({
 /* eslint-disable no-undef */
 if(typeof __e != 'undefined')__e = core;
 if(typeof __g != 'undefined')__g = global;
-},{"./$.fw":23}],29:[function(require,module,exports){
+},{"./$.fw":29}],35:[function(require,module,exports){
 var $       = require('./$')
   , SPECIES = require('./$.wks')('species');
 module.exports = function(C){
@@ -711,7 +1284,7 @@ module.exports = function(C){
     get: $.that
   });
 };
-},{"./$":28,"./$.wks":33}],30:[function(require,module,exports){
+},{"./$":34,"./$.wks":39}],36:[function(require,module,exports){
 // true  -> String#at
 // false -> String#codePointAt
 var $ = require('./$');
@@ -729,14 +1302,14 @@ module.exports = function(TO_STRING){
         : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./$":28}],31:[function(require,module,exports){
+},{"./$":34}],37:[function(require,module,exports){
 var sid = 0;
 function uid(key){
   return 'Symbol(' + key + ')_' + (++sid + Math.random()).toString(36);
 }
 uid.safe = require('./$').g.Symbol || uid;
 module.exports = uid;
-},{"./$":28}],32:[function(require,module,exports){
+},{"./$":34}],38:[function(require,module,exports){
 // 22.1.3.31 Array.prototype[@@unscopables]
 var $           = require('./$')
   , UNSCOPABLES = require('./$.wks')('unscopables');
@@ -744,19 +1317,19 @@ if($.FW && !(UNSCOPABLES in []))$.hide(Array.prototype, UNSCOPABLES, {});
 module.exports = function(key){
   if($.FW)[][UNSCOPABLES][key] = true;
 };
-},{"./$":28,"./$.wks":33}],33:[function(require,module,exports){
+},{"./$":34,"./$.wks":39}],39:[function(require,module,exports){
 var global = require('./$').g
   , store  = {};
 module.exports = function(name){
   return store[name] || (store[name] =
     global.Symbol && global.Symbol[name] || require('./$.uid').safe('Symbol.' + name));
 };
-},{"./$":28,"./$.uid":31}],34:[function(require,module,exports){
+},{"./$":34,"./$.uid":37}],40:[function(require,module,exports){
 var core  = require('./$').core
   , $iter = require('./$.iter');
 core.isIterable  = $iter.is;
 core.getIterator = $iter.get;
-},{"./$":28,"./$.iter":27}],35:[function(require,module,exports){
+},{"./$":34,"./$.iter":33}],41:[function(require,module,exports){
 var $     = require('./$')
   , ctx   = require('./$.ctx')
   , $def  = require('./$.def')
@@ -789,7 +1362,7 @@ $def($def.S + $def.F * !require('./$.iter-detect')(function(iter){ Array.from(it
     return result;
   }
 });
-},{"./$":28,"./$.ctx":19,"./$.def":20,"./$.iter":27,"./$.iter-call":24,"./$.iter-detect":26}],36:[function(require,module,exports){
+},{"./$":34,"./$.ctx":26,"./$.def":27,"./$.iter":33,"./$.iter-call":30,"./$.iter-detect":32}],42:[function(require,module,exports){
 var $          = require('./$')
   , setUnscope = require('./$.unscope')
   , ITER       = require('./$.uid').safe('iter')
@@ -824,11 +1397,7 @@ Iterators.Arguments = Iterators.Array;
 setUnscope('keys');
 setUnscope('values');
 setUnscope('entries');
-},{"./$":28,"./$.iter":27,"./$.iter-define":25,"./$.uid":31,"./$.unscope":32}],37:[function(require,module,exports){
-// 19.1.3.1 Object.assign(target, source)
-var $def = require('./$.def');
-$def($def.S, 'Object', {assign: require('./$.assign')});
-},{"./$.assign":14,"./$.def":20}],38:[function(require,module,exports){
+},{"./$":34,"./$.iter":33,"./$.iter-define":31,"./$.uid":37,"./$.unscope":38}],43:[function(require,module,exports){
 'use strict';
 // 19.1.3.6 Object.prototype.toString()
 var $   = require('./$')
@@ -838,7 +1407,7 @@ tmp[require('./$.wks')('toStringTag')] = 'z';
 if($.FW && cof(tmp) != 'z')$.hide(Object.prototype, 'toString', function toString(){
   return '[object ' + cof.classof(this) + ']';
 });
-},{"./$":28,"./$.cof":15,"./$.wks":33}],39:[function(require,module,exports){
+},{"./$":34,"./$.cof":22,"./$.wks":39}],44:[function(require,module,exports){
 'use strict';
 var strong = require('./$.collection-strong');
 
@@ -849,7 +1418,7 @@ require('./$.collection')('Set', {
     return strong.def(this, value = value === 0 ? 0 : value, value);
   }
 }, strong);
-},{"./$.collection":18,"./$.collection-strong":16}],40:[function(require,module,exports){
+},{"./$.collection":25,"./$.collection-strong":23}],45:[function(require,module,exports){
 var set   = require('./$').set
   , $at   = require('./$.string-at')(true)
   , ITER  = require('./$.uid').safe('iter')
@@ -870,10 +1439,10 @@ require('./$.iter-define')(String, 'String', function(iterated){
   iter.i += point.length;
   return step(0, point);
 });
-},{"./$":28,"./$.iter":27,"./$.iter-define":25,"./$.string-at":30,"./$.uid":31}],41:[function(require,module,exports){
+},{"./$":34,"./$.iter":33,"./$.iter-define":31,"./$.string-at":36,"./$.uid":37}],46:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 require('./$.collection-to-json')('Set');
-},{"./$.collection-to-json":17}],42:[function(require,module,exports){
+},{"./$.collection-to-json":24}],47:[function(require,module,exports){
 require('./es6.array.iterator');
 var $           = require('./$')
   , Iterators   = require('./$.iter').Iterators
@@ -884,7 +1453,7 @@ if($.FW && NodeList && !(ITERATOR in NodeList.prototype)){
   $.hide(NodeList.prototype, ITERATOR, ArrayValues);
 }
 Iterators.NodeList = ArrayValues;
-},{"./$":28,"./$.iter":27,"./$.wks":33,"./es6.array.iterator":36}],43:[function(require,module,exports){
+},{"./$":34,"./$.iter":33,"./$.wks":39,"./es6.array.iterator":42}],48:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -13054,599 +13623,28 @@ Iterators.NodeList = ArrayValues;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],44:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _Set = require('babel-runtime/core-js/set')['default'];
-
-var _Array$from = require('babel-runtime/core-js/array/from')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
+},{}],49:[function(require,module,exports){
 /**
- * Converts boolean value to DynamoDb "BOOL"
+ * Checks if `value` is `undefined`.
  *
- * @param item
- * @returns {*}
- */
-exports.marshalBoolean = marshalBoolean;
-
-/**
- * Converts mixed array to DynamoDb "L"
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
+ * @example
  *
- * @param item
- * @param marshal
- * @returns {*}
- */
-exports.marshalList = marshalList;
-
-/**
- * Converts object literal to DynamoDb "M"
+ * _.isUndefined(void 0);
+ * // => true
  *
- * @param item
- * @param marshal
- * @returns {*}
+ * _.isUndefined(null);
+ * // => false
  */
-exports.marshalMap = marshalMap;
-
-/**
- * Converts null to DynamoDb "NULL"
- *
- * @param item
- * @returns {*}
- */
-exports.marshalNull = marshalNull;
-
-/**
- * Converts number to DynamoDb "N"
- *
- * @param item
- * @returns {*}
- */
-exports.marshalNumber = marshalNumber;
-
-/**
- * Converts Arrays and Sets to DynamoDb "NS"
- *
- * @param item
- * @returns {*}
- */
-exports.marshalNumberSet = marshalNumberSet;
-
-/**
- * Converts strings to DynamoDb "S"
- *
- * @param item
- * @returns {*}
- */
-exports.marshalString = marshalString;
-
-/**
- * Converts Arrays and Sets to DynamoDb "SS"
- *
- * @param item
- * @returns {*}
- */
-exports.marshalStringSet = marshalStringSet;
-
-/**
- * Converts DynamoDb "L" to mixed array
- *
- * @param item
- * @param unmarshal
- * @returns {*}
- */
-exports.unmarshalList = unmarshalList;
-
-/**
- * Converts DynamoDb "M" to object literal
- *
- * @param item
- * @param unmarshal
- * @returns {*}
- */
-exports.unmarshalMap = unmarshalMap;
-
-/**
- * Converts DynamoDb "NULL" to null
- *
- * @param item
- * @returns {*}
- */
-exports.unmarshalNull = unmarshalNull;
-
-/**
- * Converts DynamoDb "N" to Number
- *
- * @param item
- * @returns {*}
- */
-exports.unmarshalNumber = unmarshalNumber;
-
-/**
- * Converts DynamoDb "NS" to Set of Numbers
- *
- * @param item
- * @returns {*}
- */
-exports.unmarshalNumberSet = unmarshalNumberSet;
-
-/**
- * Converts DynamoDb "SS" to Set of Strings
- *
- * @param item
- * @returns {*}
- */
-exports.unmarshalStringSet = unmarshalStringSet;
-
-/**
- * Converts DynamoDb "S", "B", "BS", "BOOL" to values.
- *
- * @param item
- * @returns {*}
- */
-exports.unmarshalPassThrough = unmarshalPassThrough;
-
-var _import = require('lodash');
-
-var _import2 = _interopRequireDefault(_import);
-
-// Marshal command chain
-var marshalCommandList = [marshalString, marshalNumber, marshalBoolean, marshalNull, marshalStringSet, marshalNumberSet, marshalList, marshalMap];
-
-exports.marshalCommandList = marshalCommandList;
-// Unmarshal command chain
-var unmarshalCommandList = [unmarshalPassThrough, unmarshalNumber, unmarshalStringSet, unmarshalNumberSet, unmarshalNull, unmarshalMap, unmarshalList];exports.unmarshalCommandList = unmarshalCommandList;
-
-function marshalBoolean(item) {
-  if (!_import2['default'].isBoolean(item)) {
-    return undefined;
-  }
-  return { BOOL: item };
+function isUndefined(value) {
+  return value === undefined;
 }
 
-function marshalList(item, marshal) {
-  if (!_import2['default'].isArray(item)) {
-    return undefined;
-  }
+module.exports = isUndefined;
 
-  item = _import2['default'].map(item, marshal);
-  return { L: item };
-}
-
-function marshalMap(item, marshal) {
-  // Todo make this accept ES6 Map or Object Literal
-  if (!_import2['default'].isPlainObject(item)) {
-    return undefined;
-  }
-
-  item = _import2['default'].reduce(item, function (result, value, key) {
-    result[key] = marshal(value);
-    return result;
-  }, {});
-
-  return { M: item };
-}
-
-function marshalNull(item) {
-  if (!_import2['default'].isNull(item) && !_import2['default'].isUndefined(item)) {
-    return undefined;
-  }
-  return { NULL: true };
-}
-
-function marshalNumber(item) {
-  if (!_import2['default'].isNumber(item)) {
-    return undefined;
-  }
-  return { N: item.toString() };
-}
-
-/**
- * Helper function for arrays to DynamoDb "NS"
- *
- * @param arr
- * @returns {*}
- */
-function marshalArrayToNumberSet(arr) {
-  if (_import2['default'].isEmpty(arr) || !_import2['default'].every(arr, _import2['default'].isNumber) || _import2['default'].uniq(arr).length !== arr.length) {
-    return undefined;
-  }
-
-  arr = _import2['default'].map(arr, function stringify(num) {
-    return num.toString();
-  });
-
-  return { NS: arr };
-}
-function marshalNumberSet(item) {
-  if (_import2['default'].isArray(item)) {
-    return marshalArrayToNumberSet(item);
-  }
-
-  if (item instanceof _Set) {
-    return marshalArrayToNumberSet(_Array$from(item));
-  }
-
-  return undefined;
-}
-
-function marshalString(item) {
-  if (!_import2['default'].isString(item) || _import2['default'].isEmpty(item)) {
-    return undefined;
-  }
-  return { S: item };
-}
-
-/**
- * Helper function for arrays to DynamoDb "SS"
- *
- * @param arr
- * @returns {*}
- */
-function marshalArrayToStringSet(arr) {
-  if (_import2['default'].isEmpty(arr) || !_import2['default'].every(arr, _import2['default'].isString) || _import2['default'].uniq(arr).length !== arr.length) {
-    return undefined;
-  }
-
-  return { SS: arr };
-}
-function marshalStringSet(item) {
-  if (_import2['default'].isArray(item)) {
-    return marshalArrayToStringSet(item);
-  }
-
-  if (item instanceof _Set) {
-    return marshalArrayToStringSet(_Array$from(item));
-  }
-
-  return undefined;
-}
-
-function unmarshalList(item, unmarshal) {
-  if (!_import2['default'].has(item, 'L')) {
-    return undefined;
-  }
-
-  return _import2['default'].map(item.L, unmarshal);
-}
-
-function unmarshalMap(item, unmarshal) {
-  // Todo Make this convert to ES6 Map instead of object literal
-  if (!_import2['default'].has(item, 'M')) {
-    return undefined;
-  }
-
-  return _import2['default'].mapValues(item.M, unmarshal);
-}
-
-function unmarshalNull(item) {
-  if (!_import2['default'].has(item, 'NULL')) {
-    return undefined;
-  }
-
-  return null;
-}
-
-function unmarshalNumber(item) {
-  if (!_import2['default'].has(item, 'N')) {
-    return undefined;
-  }
-
-  return parseFloat(item.N);
-}
-
-function unmarshalNumberSet(item) {
-  if (!_import2['default'].has(item, 'NS')) {
-    return undefined;
-  }
-
-  return _import2['default'].map(item.NS, parseFloat);
-}
-
-function unmarshalStringSet(item) {
-  if (!_import2['default'].has(item, 'SS')) {
-    return undefined;
-  }
-
-  return item.SS;
-}
-
-function unmarshalPassThrough(item) {
-  var typeList = ['S', 'B', 'BS', 'BOOL'];
-
-  var key = _import2['default'].find(typeList, function (type) {
-    return _import2['default'].has(item, type);
-  });
-
-  if (!key) {
-    return undefined;
-  }
-
-  return item[key];
-}
-
-},{"babel-runtime/core-js/array/from":2,"babel-runtime/core-js/object/define-property":5,"babel-runtime/core-js/set":6,"babel-runtime/helpers/interop-require-default":7,"lodash":43}],45:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _getIterator = require('babel-runtime/core-js/get-iterator')['default'];
-
-var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-/**
- * Uses the chain of command pattern to select the marshaling algorithm.
- * Once a command marshals the item it is assigned to the return data and
- * no further commands are called.
- *
- * Each command is passed a reference to this marshal function as well because
- * in the case of the "M" (Map) and "L" (List) DynamoDb types their subvalues
- * also need to be marshaled.
- *
- * input: {foo: 'bar'}
- * output: {M: {foo: {S: 'bar'}}}
- *
- * @param {*} item A value to marshal.
- * @returns {Object} A DynamoDb AttributeValue object.
- */
-exports.toDDB = toDDB;
-
-/**
- * Uses the chain of command pattern to select the unmarshaling algorithm to
- * use for the given AttributeValue object based on the type key. Once a
- * command handles the item, no further commands are called and the unmarshaled
- * data is returned.
- *
- * input: {M: {foo: {S: 'bar'}}}
- * output: {foo: 'bar'}
- *
- * @param {Object} item A DynamoDb formatted AttributeValue object.
- * @returns {*} Unmarshaled value.
- */
-exports.toJS = toJS;
-
-var _isUndefined = require('lodash');
-
-var _unmarshalCommandList$marshalCommandList = require('./commands');
-
-function toDDB(item) {
-  var result = undefined;
-
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-
-  try {
-    for (var _iterator = _getIterator(_unmarshalCommandList$marshalCommandList.marshalCommandList), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var command = _step.value;
-
-      result = command(item, toDDB);
-
-      if (!_isUndefined.isUndefined(result)) {
-        break;
-      }
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator['return']) {
-        _iterator['return']();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  if (_isUndefined.isUndefined(result)) {
-    throw new TypeError('Marshaling error: encountered unexpected item ' + item);
-  }
-
-  return _Object$assign({}, result);
-}
-
-function toJS(item) {
-  var unmarshaledItem = undefined;
-
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    for (var _iterator2 = _getIterator(_unmarshalCommandList$marshalCommandList.unmarshalCommandList), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var command = _step2.value;
-
-      unmarshaledItem = command(item, toJS);
-
-      if (!_isUndefined.isUndefined(unmarshaledItem)) {
-        break;
-      }
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-        _iterator2['return']();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-
-  if (_isUndefined.isUndefined(unmarshaledItem)) {
-    throw new TypeError('Unmarshal error: encountered unexpected item ' + item);
-  }
-
-  return unmarshaledItem;
-}
-
-exports['default'] = { toDDB: toDDB, toJS: toJS };
-
-},{"./commands":44,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/assign":4,"babel-runtime/core-js/object/define-property":5,"lodash":43}],46:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _isPlainObject = require('lodash');
-
-/**
- * Function decorator, validates item is a javascript object.
- *
- * @param {Function} fn Underlying function to call.
- * @returns {Function}
- */
-function ensureItemIsObject(fn) {
-  return function (item) {
-    if (_isPlainObject.isPlainObject(item)) {
-      return fn(item);
-    }
-    throw new TypeError('Item must be plain object literal');
-  };
-}
-
-exports['default'] = ensureItemIsObject;
-module.exports = exports['default'];
-
-},{"babel-runtime/core-js/object/define-property":5,"lodash":43}],47:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _ensureItemIsObject = require('./lib/ensureItemIsObject');
-
-var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
-
-var _toDDB = require('./lib/converter');
-
-/**
- * Translates a javascript object into a format ready for DynamoDb.
- *
- * @param {Object} item Plain javascript object.
- * @returns {Object} The marshaled dynamoDb item.
- */
-function marshalItem(item) {
-  var marshaledItem = _toDDB.toDDB(item);
-  return marshaledItem.M;
-}
-
-exports['default'] = _ensureItemIsObject2['default'](marshalItem);
-module.exports = exports['default'];
-
-},{"./lib/converter":45,"./lib/ensureItemIsObject":46,"babel-runtime/core-js/object/define-property":5,"babel-runtime/helpers/interop-require-default":7}],48:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _marshalItem = require('./marshalItem');
-
-var _marshalItem2 = _interopRequireDefault(_marshalItem);
-
-/**
- * Translates a JSON string into an object in DynamoDb format.
- *
- * @param {String} json A JSON representation of a javascript object.
- * @returns {Object} The marshaled DynamoDb compliant item.
- */
-function marshalJson(json) {
-  return _marshalItem2['default'](JSON.parse(json));
-}
-
-exports['default'] = marshalJson;
-module.exports = exports['default'];
-
-},{"./marshalItem":47,"babel-runtime/core-js/object/define-property":5,"babel-runtime/helpers/interop-require-default":7}],49:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _ensureItemIsObject = require('./lib/ensureItemIsObject');
-
-var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
-
-var _toJS = require('./lib/converter');
-
-/**
- * Translates a DynamoDb formatted object (a response from DynamoDb sdk) into
- * a plain javascript object with DynamoDb AttributeValue objects.
- *
- * @param {Object} item DynamoDb formatted object.
- * @returns {Object} A javascript object in normal form.
- */
-function unmarshalItem(item) {
-  return _toJS.toJS({ M: item });
-}
-
-exports['default'] = _ensureItemIsObject2['default'](unmarshalItem);
-module.exports = exports['default'];
-
-},{"./lib/converter":45,"./lib/ensureItemIsObject":46,"babel-runtime/core-js/object/define-property":5,"babel-runtime/helpers/interop-require-default":7}],50:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _unmarshalItem = require('./unmarshalItem');
-
-var _unmarshalItem2 = _interopRequireDefault(_unmarshalItem);
-
-/**
- * Translates a DynamoDb formatted object, into a normally formatted object
- * represented as a JSON string.
- *
- * @param {Object} item DynamoDb formatted object.
- * @returns {String} JSON representation of a javascript object.
- */
-function unmarshalJson(item) {
-  return JSON.stringify(_unmarshalItem2['default'](item));
-}
-
-exports['default'] = unmarshalJson;
-module.exports = exports['default'];
-
-},{"./unmarshalItem":49,"babel-runtime/core-js/object/define-property":5,"babel-runtime/helpers/interop-require-default":7}]},{},[1])(1)
+},{}]},{},[1])(1)
 });
