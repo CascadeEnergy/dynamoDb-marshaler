@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler.svg?branch=master)](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler)
-dynamoDb-marshaler
-===
+# dynamoDb-marshaler [![Build Status](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler.svg?branch=master)](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler)
 
 [![NPM](https://nodei.co/npm/dynamodb-marshaler.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dynamodb-marshaler/)
 
