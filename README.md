@@ -19,7 +19,7 @@ you're used to.
 npm install dynamodb-marshaler
 ```
 
-## Basic Marshaling
+## Basic Marshaling of Objects
 ```javascript
 var AWS = require('aws-sdk');
 var marshalItem = require('dynamodb-marshaler').marshalItem;
@@ -33,7 +33,7 @@ dynamoDb.putItem({
 });
 ```
 
-## Basic Unmarshaling
+## Basic Unmarshaling of Objects
 ```javascript
 var AWS = require('aws-sdk');
 var unmarshalItem = require('dynamodb-marshaler').unmarshalItem;
@@ -50,7 +50,18 @@ var data = dynamoDb.scan({
 });
 ```
 
+## Single Value Marshaling
+
+```javascript
+var marshal = require('dynamodb-marshaler/marshal');
+console.log(marshal('nackjicholson')); // {S: 'nackjicholson'}
+console.log(marshal(true)); // {BOOL: true}
+console.log(marshal([1, 2, 3])); // {NS: ['1', '2', '3']}
+```
+
 ## Methods
+**.marshal**  
+**.unmarshal**  
 **.marshalItem** (alias `.toDDB`)  
 **.unmarshalItem** (alias `.toJS`)  
 **.marshalJson**  
