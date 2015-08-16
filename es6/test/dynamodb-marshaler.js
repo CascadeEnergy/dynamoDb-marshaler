@@ -138,7 +138,7 @@ describe('dynamodb-marshaler', () => {
         marshaler.unmarshal({FOO: true});
       }
 
-      assert.throws(harness, /Encountered unexpected target/);
+      assert.throws(harness, /Encountered unexpected item/);
     });
   });
 
@@ -164,7 +164,7 @@ describe('dynamodb-marshaler', () => {
         marshaler.marshalItem({test: new MyObj()});
       }
 
-      assert.throws(harness, /Encountered unexpected target/);
+      assert.throws(harness, /Encountered unexpected item/);
     });
   });
 
@@ -189,7 +189,7 @@ describe('dynamodb-marshaler', () => {
         marshaler.unmarshalItem({FOO: true});
       }
 
-      assert.throws(harness, /Encountered unexpected target/);
+      assert.throws(harness, /Encountered unexpected item/);
     });
   });
 

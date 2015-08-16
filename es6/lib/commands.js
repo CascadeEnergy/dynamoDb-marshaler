@@ -1,5 +1,9 @@
 import _ from 'lodash';
 
+function unexpectedItemHandler(item) {
+  throw new TypeError(`Encountered unexpected item`);
+}
+
 // Marshal command chain
 export const marshalCommandList = [
   marshalString,
@@ -9,7 +13,8 @@ export const marshalCommandList = [
   marshalStringSet,
   marshalNumberSet,
   marshalList,
-  marshalMap
+  marshalMap,
+  unexpectedItemHandler
 ];
 
 // Unmarshal command chain
@@ -20,7 +25,8 @@ export const unmarshalCommandList = [
   unmarshalNumberSet,
   unmarshalNull,
   unmarshalMap,
-  unmarshalList
+  unmarshalList,
+  unexpectedItemHandler
 ];
 
 /**

@@ -1,4 +1,4 @@
-import dispatcher from './lib/dispatcher';
+import dispatch from 'dispatch-recursive';
 import {marshalCommandList} from './lib/commands';
 
-export default dispatcher(...marshalCommandList);
+export default dispatch(...marshalCommandList);
