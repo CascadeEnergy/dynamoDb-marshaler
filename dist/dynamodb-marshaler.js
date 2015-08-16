@@ -47,7 +47,7 @@ var marshaler = {
 exports['default'] = marshaler;
 module.exports = exports['default'];
 
-},{"./marshal":5,"./marshalItem":6,"./marshalJson":7,"./unmarshal":8,"./unmarshalItem":9,"./unmarshalJson":10,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],2:[function(require,module,exports){
+},{"./marshal":4,"./marshalItem":5,"./marshalJson":6,"./unmarshal":7,"./unmarshalItem":8,"./unmarshalJson":9,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14}],2:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -190,12 +190,16 @@ var _import = require('lodash');
 
 var _import2 = _interopRequireDefault(_import);
 
+function unexpectedItemHandler(item) {
+  throw new TypeError('Encountered unexpected item');
+}
+
 // Marshal command chain
-var marshalCommandList = [marshalString, marshalNumber, marshalBoolean, marshalNull, marshalStringSet, marshalNumberSet, marshalList, marshalMap];
+var marshalCommandList = [marshalString, marshalNumber, marshalBoolean, marshalNull, marshalStringSet, marshalNumberSet, marshalList, marshalMap, unexpectedItemHandler];
 
 exports.marshalCommandList = marshalCommandList;
 // Unmarshal command chain
-var unmarshalCommandList = [unmarshalPassThrough, unmarshalNumber, unmarshalStringSet, unmarshalNumberSet, unmarshalNull, unmarshalMap, unmarshalList];exports.unmarshalCommandList = unmarshalCommandList;
+var unmarshalCommandList = [unmarshalPassThrough, unmarshalNumber, unmarshalStringSet, unmarshalNumberSet, unmarshalNull, unmarshalMap, unmarshalList, unexpectedItemHandler];exports.unmarshalCommandList = unmarshalCommandList;
 
 function marshalBoolean(item) {
   if (!_import2['default'].isBoolean(item)) {
@@ -361,81 +365,7 @@ function unmarshalPassThrough(item) {
   return item[key];
 }
 
-},{"babel-runtime/core-js/array/from":11,"babel-runtime/core-js/object/define-property":13,"babel-runtime/core-js/set":14,"babel-runtime/helpers/interop-require-default":15,"lodash":48}],3:[function(require,module,exports){
-'use strict';
-
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _getIterator = require('babel-runtime/core-js/get-iterator')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _isUndefined = require('lodash/lang/isUndefined');
-
-var _isUndefined2 = _interopRequireDefault(_isUndefined);
-
-/**
- * Recursive dispatcher, returns a function which iterates a series of commands
- * looking for one to handle the target and return a value. If the target
- * cannot be handled by a command the command returns undefined. If none of the
- * supplied commands handle the target, an error is thrown.
- *
- * @param commands
- * @returns {Function}
- */
-function dispatcher() {
-  for (var _len = arguments.length, commands = Array(_len), _key = 0; _key < _len; _key++) {
-    commands[_key] = arguments[_key];
-  }
-
-  return function dispatch(target) {
-    var result = undefined;
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = _getIterator(commands), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var command = _step.value;
-
-        result = command(target, dispatch);
-
-        if (!_isUndefined2['default'](result)) {
-          break;
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator['return']) {
-          _iterator['return']();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
-    if (_isUndefined2['default'](result)) {
-      throw new TypeError('Encountered unexpected target');
-    }
-
-    return result;
-  };
-}
-
-exports['default'] = dispatcher;
-module.exports = exports['default'];
-
-},{"babel-runtime/core-js/get-iterator":12,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15,"lodash/lang/isUndefined":49}],4:[function(require,module,exports){
+},{"babel-runtime/core-js/array/from":10,"babel-runtime/core-js/object/define-property":12,"babel-runtime/core-js/set":13,"babel-runtime/helpers/interop-require-default":14,"lodash":49}],3:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -464,7 +394,7 @@ function ensureItemIsObject(fn) {
 exports['default'] = ensureItemIsObject;
 module.exports = exports['default'];
 
-},{"babel-runtime/core-js/object/define-property":13,"lodash":48}],5:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":12,"lodash":49}],4:[function(require,module,exports){
 'use strict';
 
 var _toConsumableArray = require('babel-runtime/helpers/to-consumable-array')['default'];
@@ -477,16 +407,16 @@ _Object$defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _dispatcher = require('./lib/dispatcher');
+var _dispatch = require('dispatch-recursive');
 
-var _dispatcher2 = _interopRequireDefault(_dispatcher);
+var _dispatch2 = _interopRequireDefault(_dispatch);
 
 var _marshalCommandList = require('./lib/commands');
 
-exports['default'] = _dispatcher2['default'].apply(undefined, _toConsumableArray(_marshalCommandList.marshalCommandList));
+exports['default'] = _dispatch2['default'].apply(undefined, _toConsumableArray(_marshalCommandList.marshalCommandList));
 module.exports = exports['default'];
 
-},{"./lib/commands":2,"./lib/dispatcher":3,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15,"babel-runtime/helpers/to-consumable-array":16}],6:[function(require,module,exports){
+},{"./lib/commands":2,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14,"babel-runtime/helpers/to-consumable-array":15,"dispatch-recursive":47}],5:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -518,7 +448,7 @@ function marshalItem(item) {
 exports['default'] = _ensureItemIsObject2['default'](marshalItem);
 module.exports = exports['default'];
 
-},{"./lib/ensureItemIsObject":4,"./marshal":5,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],7:[function(require,module,exports){
+},{"./lib/ensureItemIsObject":3,"./marshal":4,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14}],6:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -546,7 +476,7 @@ function marshalJson(json) {
 exports['default'] = marshalJson;
 module.exports = exports['default'];
 
-},{"./marshalItem":6,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],8:[function(require,module,exports){
+},{"./marshalItem":5,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14}],7:[function(require,module,exports){
 'use strict';
 
 var _toConsumableArray = require('babel-runtime/helpers/to-consumable-array')['default'];
@@ -559,16 +489,16 @@ _Object$defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _dispatcher = require('./lib/dispatcher');
+var _dispatch = require('dispatch-recursive');
 
-var _dispatcher2 = _interopRequireDefault(_dispatcher);
+var _dispatch2 = _interopRequireDefault(_dispatch);
 
 var _unmarshalCommandList = require('./lib/commands');
 
-exports['default'] = _dispatcher2['default'].apply(undefined, _toConsumableArray(_unmarshalCommandList.unmarshalCommandList));
+exports['default'] = _dispatch2['default'].apply(undefined, _toConsumableArray(_unmarshalCommandList.unmarshalCommandList));
 module.exports = exports['default'];
 
-},{"./lib/commands":2,"./lib/dispatcher":3,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15,"babel-runtime/helpers/to-consumable-array":16}],9:[function(require,module,exports){
+},{"./lib/commands":2,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14,"babel-runtime/helpers/to-consumable-array":15,"dispatch-recursive":47}],8:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -601,7 +531,7 @@ function unmarshalItem(item) {
 exports['default'] = _ensureItemIsObject2['default'](unmarshalItem);
 module.exports = exports['default'];
 
-},{"./lib/ensureItemIsObject":4,"./unmarshal":8,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],10:[function(require,module,exports){
+},{"./lib/ensureItemIsObject":3,"./unmarshal":7,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14}],9:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -630,15 +560,15 @@ function unmarshalJson(item) {
 exports['default'] = unmarshalJson;
 module.exports = exports['default'];
 
-},{"./unmarshalItem":9,"babel-runtime/core-js/object/define-property":13,"babel-runtime/helpers/interop-require-default":15}],11:[function(require,module,exports){
+},{"./unmarshalItem":8,"babel-runtime/core-js/object/define-property":12,"babel-runtime/helpers/interop-require-default":14}],10:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
-},{"core-js/library/fn/array/from":17}],12:[function(require,module,exports){
+},{"core-js/library/fn/array/from":16}],11:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
-},{"core-js/library/fn/get-iterator":18}],13:[function(require,module,exports){
+},{"core-js/library/fn/get-iterator":17}],12:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":19}],14:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":18}],13:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/set"), __esModule: true };
-},{"core-js/library/fn/set":20}],15:[function(require,module,exports){
+},{"core-js/library/fn/set":19}],14:[function(require,module,exports){
 "use strict";
 
 exports["default"] = function (obj) {
@@ -648,7 +578,7 @@ exports["default"] = function (obj) {
 };
 
 exports.__esModule = true;
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 var _Array$from = require("babel-runtime/core-js/array/from")["default"];
@@ -664,28 +594,28 @@ exports["default"] = function (arr) {
 };
 
 exports.__esModule = true;
-},{"babel-runtime/core-js/array/from":11}],17:[function(require,module,exports){
+},{"babel-runtime/core-js/array/from":10}],16:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/es6.array.from');
 module.exports = require('../../modules/$').core.Array.from;
-},{"../../modules/$":34,"../../modules/es6.array.from":41,"../../modules/es6.string.iterator":45}],18:[function(require,module,exports){
+},{"../../modules/$":33,"../../modules/es6.array.from":40,"../../modules/es6.string.iterator":44}],17:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 require('../modules/core.iter-helpers');
 module.exports = require('../modules/$').core.getIterator;
-},{"../modules/$":34,"../modules/core.iter-helpers":40,"../modules/es6.string.iterator":45,"../modules/web.dom.iterable":47}],19:[function(require,module,exports){
+},{"../modules/$":33,"../modules/core.iter-helpers":39,"../modules/es6.string.iterator":44,"../modules/web.dom.iterable":46}],18:[function(require,module,exports){
 var $ = require('../../modules/$');
 module.exports = function defineProperty(it, key, desc){
   return $.setDesc(it, key, desc);
 };
-},{"../../modules/$":34}],20:[function(require,module,exports){
+},{"../../modules/$":33}],19:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
 require('../modules/es6.set');
 require('../modules/es7.set.to-json');
 module.exports = require('../modules/$').core.Set;
-},{"../modules/$":34,"../modules/es6.object.to-string":43,"../modules/es6.set":44,"../modules/es6.string.iterator":45,"../modules/es7.set.to-json":46,"../modules/web.dom.iterable":47}],21:[function(require,module,exports){
+},{"../modules/$":33,"../modules/es6.object.to-string":42,"../modules/es6.set":43,"../modules/es6.string.iterator":44,"../modules/es7.set.to-json":45,"../modules/web.dom.iterable":46}],20:[function(require,module,exports){
 var $ = require('./$');
 function assert(condition, msg1, msg2){
   if(!condition)throw TypeError(msg2 ? msg1 + msg2 : msg1);
@@ -704,7 +634,7 @@ assert.inst = function(it, Constructor, name){
   return it;
 };
 module.exports = assert;
-},{"./$":34}],22:[function(require,module,exports){
+},{"./$":33}],21:[function(require,module,exports){
 var $        = require('./$')
   , TAG      = require('./$.wks')('toStringTag')
   , toString = {}.toString;
@@ -720,7 +650,7 @@ cof.set = function(it, tag, stat){
   if(it && !$.has(it = stat ? it : it.prototype, TAG))$.hide(it, TAG, tag);
 };
 module.exports = cof;
-},{"./$":34,"./$.wks":39}],23:[function(require,module,exports){
+},{"./$":33,"./$.wks":38}],22:[function(require,module,exports){
 'use strict';
 var $        = require('./$')
   , ctx      = require('./$.ctx')
@@ -877,7 +807,7 @@ module.exports = {
     }, IS_MAP ? 'entries' : 'values' , !IS_MAP, true);
   }
 };
-},{"./$":34,"./$.assert":21,"./$.ctx":26,"./$.for-of":28,"./$.iter":33,"./$.iter-define":31,"./$.uid":37}],24:[function(require,module,exports){
+},{"./$":33,"./$.assert":20,"./$.ctx":25,"./$.for-of":27,"./$.iter":32,"./$.iter-define":30,"./$.uid":36}],23:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $def  = require('./$.def')
   , forOf = require('./$.for-of');
@@ -890,7 +820,7 @@ module.exports = function(NAME){
     }
   });
 };
-},{"./$.def":27,"./$.for-of":28}],25:[function(require,module,exports){
+},{"./$.def":26,"./$.for-of":27}],24:[function(require,module,exports){
 'use strict';
 var $     = require('./$')
   , $def  = require('./$.def')
@@ -956,7 +886,7 @@ module.exports = function(NAME, methods, common, IS_MAP, IS_WEAK){
 
   return C;
 };
-},{"./$":34,"./$.assert":21,"./$.cof":22,"./$.def":27,"./$.for-of":28,"./$.iter":33,"./$.iter-detect":32,"./$.species":35}],26:[function(require,module,exports){
+},{"./$":33,"./$.assert":20,"./$.cof":21,"./$.def":26,"./$.for-of":27,"./$.iter":32,"./$.iter-detect":31,"./$.species":34}],25:[function(require,module,exports){
 // Optional / simple context binding
 var assertFunction = require('./$.assert').fn;
 module.exports = function(fn, that, length){
@@ -976,7 +906,7 @@ module.exports = function(fn, that, length){
       return fn.apply(that, arguments);
     };
 };
-},{"./$.assert":21}],27:[function(require,module,exports){
+},{"./$.assert":20}],26:[function(require,module,exports){
 var $          = require('./$')
   , global     = $.g
   , core       = $.core
@@ -1023,7 +953,7 @@ function $def(type, name, source){
   }
 }
 module.exports = $def;
-},{"./$":34}],28:[function(require,module,exports){
+},{"./$":33}],27:[function(require,module,exports){
 var ctx  = require('./$.ctx')
   , get  = require('./$.iter').get
   , call = require('./$.iter-call');
@@ -1037,13 +967,13 @@ module.exports = function(iterable, entries, fn, that){
     }
   }
 };
-},{"./$.ctx":26,"./$.iter":33,"./$.iter-call":30}],29:[function(require,module,exports){
+},{"./$.ctx":25,"./$.iter":32,"./$.iter-call":29}],28:[function(require,module,exports){
 module.exports = function($){
   $.FW   = false;
   $.path = $.core;
   return $;
 };
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var assertObject = require('./$.assert').obj;
 function close(iterator){
   var ret = iterator['return'];
@@ -1059,7 +989,7 @@ function call(iterator, fn, value, entries){
 }
 call.close = close;
 module.exports = call;
-},{"./$.assert":21}],31:[function(require,module,exports){
+},{"./$.assert":20}],30:[function(require,module,exports){
 var $def            = require('./$.def')
   , $               = require('./$')
   , cof             = require('./$.cof')
@@ -1109,7 +1039,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE)
     } else $def($def.P + $def.F * $iter.BUGGY, NAME, methods);
   }
 };
-},{"./$":34,"./$.cof":22,"./$.def":27,"./$.iter":33,"./$.wks":39}],32:[function(require,module,exports){
+},{"./$":33,"./$.cof":21,"./$.def":26,"./$.iter":32,"./$.wks":38}],31:[function(require,module,exports){
 var SYMBOL_ITERATOR = require('./$.wks')('iterator')
   , SAFE_CLOSING    = false;
 try {
@@ -1129,7 +1059,7 @@ module.exports = function(exec){
   } catch(e){ /* empty */ }
   return safe;
 };
-},{"./$.wks":39}],33:[function(require,module,exports){
+},{"./$.wks":38}],32:[function(require,module,exports){
 'use strict';
 var $                 = require('./$')
   , cof               = require('./$.cof')
@@ -1171,7 +1101,7 @@ module.exports = {
     cof.set(Constructor, NAME + ' Iterator');
   }
 };
-},{"./$":34,"./$.assert":21,"./$.cof":22,"./$.wks":39}],34:[function(require,module,exports){
+},{"./$":33,"./$.assert":20,"./$.cof":21,"./$.wks":38}],33:[function(require,module,exports){
 'use strict';
 var global = typeof self != 'undefined' ? self : Function('return this')()
   , core   = {}
@@ -1275,7 +1205,7 @@ var $ = module.exports = require('./$.fw')({
 /* eslint-disable no-undef */
 if(typeof __e != 'undefined')__e = core;
 if(typeof __g != 'undefined')__g = global;
-},{"./$.fw":29}],35:[function(require,module,exports){
+},{"./$.fw":28}],34:[function(require,module,exports){
 var $       = require('./$')
   , SPECIES = require('./$.wks')('species');
 module.exports = function(C){
@@ -1284,7 +1214,7 @@ module.exports = function(C){
     get: $.that
   });
 };
-},{"./$":34,"./$.wks":39}],36:[function(require,module,exports){
+},{"./$":33,"./$.wks":38}],35:[function(require,module,exports){
 // true  -> String#at
 // false -> String#codePointAt
 var $ = require('./$');
@@ -1302,14 +1232,14 @@ module.exports = function(TO_STRING){
         : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./$":34}],37:[function(require,module,exports){
+},{"./$":33}],36:[function(require,module,exports){
 var sid = 0;
 function uid(key){
   return 'Symbol(' + key + ')_' + (++sid + Math.random()).toString(36);
 }
 uid.safe = require('./$').g.Symbol || uid;
 module.exports = uid;
-},{"./$":34}],38:[function(require,module,exports){
+},{"./$":33}],37:[function(require,module,exports){
 // 22.1.3.31 Array.prototype[@@unscopables]
 var $           = require('./$')
   , UNSCOPABLES = require('./$.wks')('unscopables');
@@ -1317,19 +1247,19 @@ if($.FW && !(UNSCOPABLES in []))$.hide(Array.prototype, UNSCOPABLES, {});
 module.exports = function(key){
   if($.FW)[][UNSCOPABLES][key] = true;
 };
-},{"./$":34,"./$.wks":39}],39:[function(require,module,exports){
+},{"./$":33,"./$.wks":38}],38:[function(require,module,exports){
 var global = require('./$').g
   , store  = {};
 module.exports = function(name){
   return store[name] || (store[name] =
     global.Symbol && global.Symbol[name] || require('./$.uid').safe('Symbol.' + name));
 };
-},{"./$":34,"./$.uid":37}],40:[function(require,module,exports){
+},{"./$":33,"./$.uid":36}],39:[function(require,module,exports){
 var core  = require('./$').core
   , $iter = require('./$.iter');
 core.isIterable  = $iter.is;
 core.getIterator = $iter.get;
-},{"./$":34,"./$.iter":33}],41:[function(require,module,exports){
+},{"./$":33,"./$.iter":32}],40:[function(require,module,exports){
 var $     = require('./$')
   , ctx   = require('./$.ctx')
   , $def  = require('./$.def')
@@ -1362,7 +1292,7 @@ $def($def.S + $def.F * !require('./$.iter-detect')(function(iter){ Array.from(it
     return result;
   }
 });
-},{"./$":34,"./$.ctx":26,"./$.def":27,"./$.iter":33,"./$.iter-call":30,"./$.iter-detect":32}],42:[function(require,module,exports){
+},{"./$":33,"./$.ctx":25,"./$.def":26,"./$.iter":32,"./$.iter-call":29,"./$.iter-detect":31}],41:[function(require,module,exports){
 var $          = require('./$')
   , setUnscope = require('./$.unscope')
   , ITER       = require('./$.uid').safe('iter')
@@ -1397,7 +1327,7 @@ Iterators.Arguments = Iterators.Array;
 setUnscope('keys');
 setUnscope('values');
 setUnscope('entries');
-},{"./$":34,"./$.iter":33,"./$.iter-define":31,"./$.uid":37,"./$.unscope":38}],43:[function(require,module,exports){
+},{"./$":33,"./$.iter":32,"./$.iter-define":30,"./$.uid":36,"./$.unscope":37}],42:[function(require,module,exports){
 'use strict';
 // 19.1.3.6 Object.prototype.toString()
 var $   = require('./$')
@@ -1407,7 +1337,7 @@ tmp[require('./$.wks')('toStringTag')] = 'z';
 if($.FW && cof(tmp) != 'z')$.hide(Object.prototype, 'toString', function toString(){
   return '[object ' + cof.classof(this) + ']';
 });
-},{"./$":34,"./$.cof":22,"./$.wks":39}],44:[function(require,module,exports){
+},{"./$":33,"./$.cof":21,"./$.wks":38}],43:[function(require,module,exports){
 'use strict';
 var strong = require('./$.collection-strong');
 
@@ -1418,7 +1348,7 @@ require('./$.collection')('Set', {
     return strong.def(this, value = value === 0 ? 0 : value, value);
   }
 }, strong);
-},{"./$.collection":25,"./$.collection-strong":23}],45:[function(require,module,exports){
+},{"./$.collection":24,"./$.collection-strong":22}],44:[function(require,module,exports){
 var set   = require('./$').set
   , $at   = require('./$.string-at')(true)
   , ITER  = require('./$.uid').safe('iter')
@@ -1439,10 +1369,10 @@ require('./$.iter-define')(String, 'String', function(iterated){
   iter.i += point.length;
   return step(0, point);
 });
-},{"./$":34,"./$.iter":33,"./$.iter-define":31,"./$.string-at":36,"./$.uid":37}],46:[function(require,module,exports){
+},{"./$":33,"./$.iter":32,"./$.iter-define":30,"./$.string-at":35,"./$.uid":36}],45:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 require('./$.collection-to-json')('Set');
-},{"./$.collection-to-json":24}],47:[function(require,module,exports){
+},{"./$.collection-to-json":23}],46:[function(require,module,exports){
 require('./es6.array.iterator');
 var $           = require('./$')
   , Iterators   = require('./$.iter').Iterators
@@ -1453,7 +1383,99 @@ if($.FW && NodeList && !(ITERATOR in NodeList.prototype)){
   $.hide(NodeList.prototype, ITERATOR, ArrayValues);
 }
 Iterators.NodeList = ArrayValues;
-},{"./$":34,"./$.iter":33,"./$.wks":39,"./es6.array.iterator":42}],48:[function(require,module,exports){
+},{"./$":33,"./$.iter":32,"./$.wks":38,"./es6.array.iterator":41}],47:[function(require,module,exports){
+'use strict';
+
+var _getIterator = require('babel-runtime/core-js/get-iterator')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _lodashLangIsUndefined = require('lodash/lang/isUndefined');
+
+var _lodashLangIsUndefined2 = _interopRequireDefault(_lodashLangIsUndefined);
+
+/**
+ * Recursive dispatch, returns a function which iterates a series of commands
+ * looking for one to handle the target and return a value. The commands adhere
+ * to an interface of (target, fn) where the returned dispatch fn is passed
+ * along to each command, where it can be used by the command. If the target
+ * cannot be handled by a command the command returns undefined. If none of the
+ * supplied commands handle the target, an error is thrown.
+ *
+ * @param commands
+ * @returns {Function}
+ */
+function dispatch() {
+  for (var _len = arguments.length, commands = Array(_len), _key = 0; _key < _len; _key++) {
+    commands[_key] = arguments[_key];
+  }
+
+  return function fn(target) {
+    var result = undefined;
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = _getIterator(commands), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var command = _step.value;
+
+        result = command(target, fn);
+
+        if (!(0, _lodashLangIsUndefined2['default'])(result)) {
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator['return']) {
+          _iterator['return']();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    return result;
+  };
+}
+
+exports['default'] = dispatch;
+module.exports = exports['default'];
+},{"babel-runtime/core-js/get-iterator":11,"babel-runtime/helpers/interop-require-default":14,"lodash/lang/isUndefined":48}],48:[function(require,module,exports){
+/**
+ * Checks if `value` is `undefined`.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
+ * @example
+ *
+ * _.isUndefined(void 0);
+ * // => true
+ *
+ * _.isUndefined(null);
+ * // => false
+ */
+function isUndefined(value) {
+  return value === undefined;
+}
+
+module.exports = isUndefined;
+
+},{}],49:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -13623,28 +13645,5 @@ Iterators.NodeList = ArrayValues;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],49:[function(require,module,exports){
-/**
- * Checks if `value` is `undefined`.
- *
- * @static
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
- * @example
- *
- * _.isUndefined(void 0);
- * // => true
- *
- * _.isUndefined(null);
- * // => false
- */
-function isUndefined(value) {
-  return value === undefined;
-}
-
-module.exports = isUndefined;
-
 },{}]},{},[1])(1)
 });

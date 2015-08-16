@@ -10,11 +10,11 @@ _Object$defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _dispatcher = require('./lib/dispatcher');
+var _dispatch = require('dispatch-recursive');
 
-var _dispatcher2 = _interopRequireDefault(_dispatcher);
+var _dispatch2 = _interopRequireDefault(_dispatch);
 
 var _unmarshalCommandList = require('./lib/commands');
 
-exports['default'] = _dispatcher2['default'].apply(undefined, _toConsumableArray(_unmarshalCommandList.unmarshalCommandList));
+exports['default'] = _dispatch2['default'].apply(undefined, _toConsumableArray(_unmarshalCommandList.unmarshalCommandList));
 module.exports = exports['default'];

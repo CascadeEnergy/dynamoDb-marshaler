@@ -81,7 +81,7 @@ describe('dynamodb-marshaler', function () {
         _marshaler2['default'].unmarshal({ FOO: true });
       }
 
-      _assert2['default'].throws(harness, /Encountered unexpected target/);
+      _assert2['default'].throws(harness, /Encountered unexpected item/);
     });
   });
 
@@ -107,7 +107,7 @@ describe('dynamodb-marshaler', function () {
         _marshaler2['default'].marshalItem({ test: new MyObj() });
       }
 
-      _assert2['default'].throws(harness, /Encountered unexpected target/);
+      _assert2['default'].throws(harness, /Encountered unexpected item/);
     });
   });
 
@@ -132,7 +132,7 @@ describe('dynamodb-marshaler', function () {
         _marshaler2['default'].unmarshalItem({ FOO: true });
       }
 
-      _assert2['default'].throws(harness, /Encountered unexpected target/);
+      _assert2['default'].throws(harness, /Encountered unexpected item/);
     });
   });
 
