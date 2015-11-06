@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-marshaler",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.",
   "main": "dynamodb-marshaler.js",
   "repository": {
@@ -14,8 +14,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "babel": "^5.2.17",
-    "babelify": "^6.0.2",
+    "babel": "^5.8.29",
+    "babelify": "^6.4.0",
     "browserify": "^9.0.8",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
@@ -36,9 +36,9 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
-    "babel-runtime": "^5.2.17",
-    "dispatch-recursive": "^1.0.0",
-    "lodash": "^3.7.0"
+    "babel-runtime": "^5.8.29",
+    "dispatch-recursive": "^1.0.2",
+    "lodash": "^3.10.1"
   },
   "engines": {
     "node": ">=0.10.33"
