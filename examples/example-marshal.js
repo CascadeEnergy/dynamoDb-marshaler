@@ -1,6 +1,6 @@
 'use strict';
 
-var marshalItem = require('../dynamodb-marshaler').marshalItem;
+var marshalItem = require('../').marshalItem;
 
 var item = {
   name: 'Will Vaughn',

@@ -1,8 +1,8 @@
-import assert from 'assert';
-import {withData} from 'leche';
-import marshaler from '../dynamodb-marshaler';
+var assert = require('assert');
+var withData = require('leche').withData;
+var marshaler = require('../');
 
-describe('dynamodb-marshaler', () => {
+describe('dynamodb-marshaler', function() {
   withData([
     ['marshal'],
     ['unmarshal'],
@@ -12,27 +12,30 @@ describe('dynamodb-marshaler', () => {
     ['toJS'],
     ['unmarshalItem'],
     ['unmarshalJson']
-  ], (method) => {
-    it(`should have method ${method}`, () => {
+  ], function(method) {
+    it('should have method ' + method, function() {
       assert.ok(typeof marshaler[method] === 'function');
     });
   });
 
-  it('should alias marshalItem to toDDB method', () => {
+  it('should alias marshalItem to toDDB method', function() {
     assert.strictEqual(marshaler.marshalItem, marshaler.toDDB);
   });
 
-  it('should alias unmarshalItem to toJS method', () => {
+  it('should alias unmarshalItem to toJS method', function() {
     assert.strictEqual(marshaler.unmarshalItem, marshaler.toJS);
   });
 
-  describe('marshal', () => {
-    const numberSet = new Set();
+  describe('marshal', function() {
+    var numberSet;
+    var stringSet;
+
+    numberSet = new Set();
     numberSet.add(42);
     numberSet.add(17);
     numberSet.add(25);
 
-    const stringSet = new Set();
+    stringSet = new Set();
     stringSet.add('foo');
     stringSet.add('bar');
     stringSet.add('baz');
@@ -82,14 +85,17 @@ describe('dynamodb-marshaler', () => {
         stringSet,
         {SS: ['foo', 'bar', 'baz']}
       ]
-    }, (value, expected) => {
-      it('should marshal individual value to DynamoDb AttributeValue', () => {
-        assert.deepEqual(marshaler.marshal(value), expected);
-      });
+    }, function(value, expected) {
+      it(
+        'should marshal individual value to DynamoDb AttributeValue',
+        function() {
+          assert.deepEqual(marshaler.marshal(value), expected);
+        }
+      );
     });
   });
 
-  describe('unmarshal', () => {
+  describe('unmarshal', function() {
     withData({
       'dynamo "BOOL" to false': [
         {BOOL: false},
@@ -127,13 +133,13 @@ describe('dynamodb-marshaler', () => {
         {SS: ['foo', 'bar', 'baz']},
         ['foo', 'bar', 'baz']
       ]
-    }, (value, expected) => {
-      it('should convert successfully', () => {
+    }, function(value, expected) {
+      it('should convert successfully', function() {
         assert.deepEqual(marshaler.unmarshal(value), expected);
       });
     });
 
-    it('should throw type error if given invalid item', () => {
+    it('should throw type error if given invalid item', function() {
       function harness() {
         marshaler.unmarshal({FOO: true});
       }
@@ -142,14 +148,14 @@ describe('dynamodb-marshaler', () => {
     });
   });
 
-  describe('marshalItem', () => {
-    it('should marshal object successfully', () => {
-      const item = {
+  describe('marshalItem', function() {
+    it('should marshal object successfully', function() {
+      var item = {
         foo: 'bar',
         beep: false,
         bagel: ['cream cheese', 'onion']
       };
-      const expected = {
+      var expected = {
         foo: {S: 'bar'},
         beep: {BOOL: false},
         bagel: {SS: ['cream cheese', 'onion']}
@@ -158,7 +164,7 @@ describe('dynamodb-marshaler', () => {
       assert.deepEqual(marshaler.marshalItem(item), expected);
     });
 
-    it('should throw type error if given invalid item', () => {
+    it('should throw type error if given invalid item', function() {
       function harness() {
         function MyObj() {}
         marshaler.marshalItem({test: new MyObj()});
@@ -168,14 +174,14 @@ describe('dynamodb-marshaler', () => {
     });
   });
 
-  describe('unmarshalItem', () => {
-    it('should unmarshal object successfully', () => {
-      const item = {
+  describe('unmarshalItem', function() {
+    it('should unmarshal object successfully', function() {
+      var item = {
         foo: {S: 'bar'},
         beep: {BOOL: false},
         bagel: {SS: ['cream cheese', 'onion']}
       };
-      const expected = {
+      var expected = {
         foo: 'bar',
         beep: false,
         bagel: ['cream cheese', 'onion']
@@ -184,7 +190,7 @@ describe('dynamodb-marshaler', () => {
       assert.deepEqual(marshaler.unmarshalItem(item), expected);
     });
 
-    it('should throw type error if given invalid item', () => {
+    it('should throw type error if given invalid item', function() {
       function harness() {
         marshaler.unmarshalItem({FOO: true});
       }
@@ -193,10 +199,10 @@ describe('dynamodb-marshaler', () => {
     });
   });
 
-  describe('marshalJson', () => {
-    it('should translate JSON string into a DynamoDb object', () => {
-      const json = '{"foo":"bar","numbers":[42,17,25]}';
-      const expectedItem = {
+  describe('marshalJson', function() {
+    it('should translate JSON string into a DynamoDb object', function() {
+      var json = '{"foo":"bar","numbers":[42,17,25]}';
+      var expectedItem = {
         foo: {S: 'bar'},
         numbers: {NS: ['42', '17', '25']}
       };
@@ -205,14 +211,17 @@ describe('dynamodb-marshaler', () => {
     });
   });
 
-  describe('unmarshalJson', () => {
-    it('should translate DynamoDB object into a standard JSON string', () => {
-      const item = {
-        foo: {S: 'bar'},
-        numbers: {NS: ['42', '17', '25']}
-      };
-      const expected = '{"foo":"bar","numbers":[42,17,25]}';
-      assert.equal(marshaler.unmarshalJson(item), expected);
-    });
+  describe('unmarshalJson', function() {
+    it(
+      'should translate DynamoDB object into a standard JSON string',
+      function() {
+        var item = {
+          foo: {S: 'bar'},
+          numbers: {NS: ['42', '17', '25']}
+        };
+        var expected = '{"foo":"bar","numbers":[42,17,25]}';
+        assert.equal(marshaler.unmarshalJson(item), expected);
+      }
+    );
   });
 });
