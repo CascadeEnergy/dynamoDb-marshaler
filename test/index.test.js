@@ -27,19 +27,6 @@ describe('dynamodb-marshaler', function() {
   });
 
   describe('marshal', function() {
-    var numberSet;
-    var stringSet;
-
-    numberSet = new Set();
-    numberSet.add(42);
-    numberSet.add(17);
-    numberSet.add(25);
-
-    stringSet = new Set();
-    stringSet.add('foo');
-    stringSet.add('bar');
-    stringSet.add('baz');
-
     withData({
       'boolean false to dynamo "BOOL"': [
         false,
@@ -69,20 +56,12 @@ describe('dynamodb-marshaler', function() {
         [42, 17, 25],
         {NS: ['42', '17', '25']}
       ],
-      'Set of numbers to dynamo "NS"': [
-        numberSet,
-        {NS: ['42', '17', '25']}
-      ],
       'string to dynamo "S"': [
         'foo',
         {S: 'foo'}
       ],
       'homogeneous string array to dynamo "SS"': [
         ['foo', 'bar', 'baz'],
-        {SS: ['foo', 'bar', 'baz']}
-      ],
-      'Set of strings to dynamo "SS"': [
-        stringSet,
         {SS: ['foo', 'bar', 'baz']}
       ]
     }, function(value, expected) {

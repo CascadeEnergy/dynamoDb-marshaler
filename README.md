@@ -102,8 +102,3 @@ Here's a table:
 | Empty                 | []                    | {"L": []}                                          |
 | Mixed                 | [42, "foo", null]     | {"L": [{"N": "42"}, {"S": "foo"}, {"NULL": true}]} |
 | Duplicates            | ["foo", "bar", "foo"] | {"L": [{"S": "foo"}, {"S": "bar"}, {"S": "foo"}]}  |
-
-## Contributions
-
-This module is written in ES6, and transpiled to ES5 by babel. Please contribute. But make sure test coverage is 100%
-and that the code complies with the [Cascade Energy Style Guide for NodeJs](https://github.com/CascadeEnergy/node-style-guide)
