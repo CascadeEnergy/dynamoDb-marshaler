@@ -1,3 +1,5 @@
+'use strict';
+
 var marshalItem = require('./marshalItem');
 
 /**

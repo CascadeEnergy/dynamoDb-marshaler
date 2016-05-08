@@ -1,3 +1,5 @@
+'use strict';
+
 var ensureItemIsObject = require('./lib/ensureItemIsObject');
 var marshal = require('./marshal');
 

@@ -1,3 +1,5 @@
+'use strict';
+
 var dispatch = require('dispatch-recursive');
 var marshalingCommands = require('./lib/marshalingCommands');
 

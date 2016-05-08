@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('assert');
 var sinon = require('sinon');
 var ensureItemIsObject = require('../../lib/ensureItemIsObject');

@@ -1,3 +1,5 @@
+'use strict';
+
 var unmarshalItem = require('./unmarshalItem');
 
 /**

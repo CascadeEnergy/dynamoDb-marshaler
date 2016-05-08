@@ -1,3 +1,5 @@
+'use strict';
+
 var marshal = require('./marshal');
 var marshalJson = require('./marshalJson');
 var marshalItem = require('./marshalItem');
