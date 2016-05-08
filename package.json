@@ -25,7 +25,7 @@
     "uglifyjs": "^2.4.10"
   },
   "dependencies": {
-    "dispatch-recursive": "^1.0.2",
+    "dispatch-recursive": "^2.0.0",
     "lodash": "^4.11.2"
   },
   "engines": {
