@@ -21,7 +21,7 @@ npm install dynamodb-marshaler
 ```javascript
 var AWS = require('aws-sdk');
 var marshalItem = require('dynamodb-marshaler').marshalItem;
-    
+
 AWS.config.region = 'us-west-2';
 var dynamoDb = new AWS.DynamoDB();
 
@@ -35,7 +35,7 @@ dynamoDb.putItem({
 ```javascript
 var AWS = require('aws-sdk');
 var unmarshalItem = require('dynamodb-marshaler').unmarshalItem;
-    
+
 AWS.config.region = 'us-west-2';
 var dynamoDb = new AWS.DynamoDB();
 
@@ -102,3 +102,9 @@ Here's a table:
 | Empty                 | []                    | {"L": []}                                          |
 | Mixed                 | [42, "foo", null]     | {"L": [{"N": "42"}, {"S": "foo"}, {"NULL": true}]} |
 | Duplicates            | ["foo", "bar", "foo"] | {"L": [{"S": "foo"}, {"S": "bar"}, {"S": "foo"}]}  |
+
+## Contribute
+
+Pull requests are welcome. Please run unit tests and linter.
+
+`npm test`, `npm run lint`, and `npm run cov`.
