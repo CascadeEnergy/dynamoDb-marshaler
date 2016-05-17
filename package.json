@@ -2,43 +2,31 @@
   "name": "dynamodb-marshaler",
   "version": "1.2.2",
   "description": "Translates sane javascript objects (and JSON) into DynamoDb format and vice versa.",
-  "main": "dynamodb-marshaler.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/CascadeEnergy/dynamoDb-marshaler.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp test",
-    "browser-build": "browserify src/dynamodb-marshaler.js --standalone dynamodb-marshaler -t babelify --outfile dist/dynamodb-marshaler.js"
+    "test": "mocha --recursive",
+    "build:browser": "browserify index.js --standalone dynamodb-marshaler | uglifyjs -c > dist/dynamodb-marshaler.min.js",
+    "cov": "istanbul cover node_modules/.bin/_mocha -- --recursive",
+    "lint": "jshint ."
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "babel": "^5.8.29",
-    "babelify": "^6.4.0",
-    "browserify": "^9.0.8",
-    "gulp": "^3.8.11",
-    "gulp-babel": "^5.1.0",
-    "gulp-file": "^0.2.0",
-    "gulp-istanbul": "^0.8.1",
-    "gulp-jshint": "^1.10.0",
-    "gulp-load-plugins": "^0.10.0",
-    "gulp-mocha": "^2.0.1",
-    "gulp-plumber": "^1.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-streamify": "0.0.5",
-    "gulp-uglify": "^1.2.0",
-    "isparta": "^3.0.3",
-    "jshint-stylish": "^1.0.1",
+    "browserify": "^13.0.1",
+    "istanbul": "^0.4.3",
+    "jshint": "^2.9.2",
     "leche": "^2.1.1",
-    "mocha": "^2.2.4",
-    "sinon": "^1.14.1",
-    "vinyl-source-stream": "^1.1.0"
+    "mocha": "^2.4.5",
+    "sinon": "^1.17.4",
+    "uglifyjs": "^2.4.10"
   },
   "dependencies": {
-    "babel-runtime": "^5.8.29",
-    "dispatch-recursive": "^1.0.2",
-    "lodash": "^3.10.1"
+    "dispatch-recursive": "^2.0.0",
+    "lodash": "^4.11.2"
   },
   "engines": {
     "node": ">=0.10.33"

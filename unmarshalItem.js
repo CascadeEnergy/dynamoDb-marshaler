@@ -1,20 +1,7 @@
 'use strict';
 
-var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
-
-_Object$defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _ensureItemIsObject = require('./lib/ensureItemIsObject');
-
-var _ensureItemIsObject2 = _interopRequireDefault(_ensureItemIsObject);
-
-var _unmarshal = require('./unmarshal');
-
-var _unmarshal2 = _interopRequireDefault(_unmarshal);
+var ensureItemIsObject = require('./lib/ensureItemIsObject');
+var unmarshal = require('./unmarshal');
 
 /**
  * Translates a DynamoDb formatted object (a response from DynamoDb sdk) into
@@ -24,8 +11,7 @@ var _unmarshal2 = _interopRequireDefault(_unmarshal);
  * @returns {Object} A javascript object in normal form.
  */
 function unmarshalItem(item) {
-  return _unmarshal2['default']({ M: item });
+  return unmarshal({ M: item });
 }
 
-exports['default'] = _ensureItemIsObject2['default'](unmarshalItem);
-module.exports = exports['default'];
+module.exports = ensureItemIsObject(unmarshalItem);
