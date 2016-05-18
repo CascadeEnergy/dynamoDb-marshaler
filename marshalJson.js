@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash/fp');
 var marshalItem = require('./marshalItem');
 
 /**
@@ -8,8 +9,4 @@ var marshalItem = require('./marshalItem');
  * @param {String} json A JSON representation of a javascript object.
  * @returns {Object} The marshaled DynamoDb compliant item.
  */
-function marshalJson(json) {
-  return marshalItem(JSON.parse(json));
-}
-
-module.exports = marshalJson;
+module.exports = _.compose(marshalItem, JSON.parse);
