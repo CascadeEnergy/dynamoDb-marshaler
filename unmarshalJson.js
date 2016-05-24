@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash/fp');
 var unmarshalItem = require('./unmarshalItem');
 
 /**
@@ -9,8 +10,4 @@ var unmarshalItem = require('./unmarshalItem');
  * @param {Object} item DynamoDb formatted object.
  * @returns {String} JSON representation of a javascript object.
  */
-function unmarshalJson(item) {
-  return JSON.stringify(unmarshalItem(item));
-}
-
-module.exports = unmarshalJson;
+module.exports = _.compose(JSON.stringify, unmarshalItem);
