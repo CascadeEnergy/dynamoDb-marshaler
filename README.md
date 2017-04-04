@@ -1,4 +1,12 @@
-# dynamoDb-marshaler [![Build Status](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler.svg?branch=master)](https://travis-ci.org/CascadeEnergy/dynamoDb-marshaler)
+# dynamoDb-marshaler 
+
+**Note**
+
+Amazon has added the DocumentClient to the official DynamoDB JavaScript SDK, which provides functionality very much like what this repository was intended to do. You can read about the official DynamoDB DocumentClient here: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html
+
+We'll be keeping this repository available for the time being as a reference for anoyone who may have dependencies on it, but we are not intending to continue with development or support for this project.
+
+Future pull requests and issues filed against this repo are almost certain to be closed as "will not fix".
 
 [![NPM](https://nodei.co/npm/dynamodb-marshaler.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dynamodb-marshaler/)
 
