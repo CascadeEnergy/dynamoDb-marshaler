@@ -15,6 +15,13 @@
   },
   "author": "",
   "license": "MIT",
+  "keywords": [
+    "dynamodb",
+    "dynamodb-mashaler",
+    "dynamo",
+    "mashaler",
+    "parser"
+  ],
   "devDependencies": {
     "browserify": "^13.0.1",
     "istanbul": "^0.4.3",
